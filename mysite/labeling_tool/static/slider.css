@@ -1,0 +1,14 @@
+.slider {
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .slide {
+    width: 100%;
+    transition: transform 0.5s ease;
+  }
+  
+  .slide img {
+    width: 100%;
+    display: block;
+  }

@@ -1,0 +1,8 @@
+.image_Container {
+    margin-top: 0.5rem;
+    display: flex;
+    overflow-x: scroll;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    scrollbar-color: gray;
+ }

@@ -1,0 +1,24 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Bounding Box</title>
+    
+    <style>
+        #canvas {
+            border: 2px solid red;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvas"  width="500" height="500"></canvas>
+    <img id="image" src="{% static 'img/img2_24.png' %}" width="500" height="500">
+    
+    <script src="{% static 'js/drawing.js' %}"></script> 
+    
+</body>
+</html>
+

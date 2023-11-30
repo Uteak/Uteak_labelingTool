@@ -1,0 +1,56 @@
+
+<!-- Django 템플릿 상단에 이러한 태그를 추가합니다 -->
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Webpage</title>
+    <!-- CSS 파일 연결 -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/scroll.css' %}"> 
+
+</head>
+<body>
+
+    <div class="carousel_main">
+
+        
+        <div class="myprofile_form_div" id="myprofileFormDiv" >
+
+            {% for list in images %}
+                <div class="carousel_slide" data-image-count="{{ images|length }}" id="image">
+                    <img src="{{ list.image.url }}" alt="{{ list.title }}" style="width: 800px; height: 500px;">
+                </div>
+
+            {% endfor %}
+        </div> 
+        <div id="mouseCoordinates"></div>
+        <div id="mouseCoordinatesXY"></div>
+        <div id="mouseCoordinatesPage"></div>
+        <div id="Page"></div>
+        <div class="text-end pt-3" style="cursor: pointer;">
+          <img class="button_design" id="scrollButtonback" src="{% static 'img/left.png' %}" style="width: 20px; height: 20px;">
+          <img class="button_design" id="scrollButtongo" src="{% static 'img/right.png' %}" style="width: 20px; height: 20px;">
+        </div>
+
+        <div id="boundingBoxInfo"></div>
+        <pre id="boundingBoxesInfo"></pre>
+
+    </div> 
+    <script src="{% static 'js/scroll.js' %}"></script>
+    <script src="{% static 'js/drawing.js' %}"></script>
+    <script src="{% static 'js/bounding_box.js' %}"></script>
+</body>
+</html>
+
+{% comment %} {% load static %}
+
+<div class="myprofile_form_div" id="myprofileFormDiv">
+    {% for list in images %}
+        <img src="{{ list.image.url }}" alt="{{ list.title }}" style="width: 200px; height: 150px;">
+    {% endfor %}
+</div>
+<div class="text-end pt-3" style="cursor: pointer;">
+  <img class="button_design" id="scrollButtonback" src="{% static 'img/left.png' %}">
+  <img class="button_design" id="scrollButtongo" src="{% static 'img/right.png' %}">
+</div> {% endcomment %}

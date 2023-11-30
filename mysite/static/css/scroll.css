@@ -1,0 +1,16 @@
+.myprofile_form_div {
+
+    display: flex;
+    overflow-x: scroll;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    scrollbar-color: gray;
+ }
+ 
+.carousel_main {
+    width: 800px;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+    user-select: none;
+}
