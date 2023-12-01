@@ -20,7 +20,12 @@ slides.forEach(slide => {
     const imageName = src.split('/').pop(); // URL을 '/'로 분리하고 마지막 부분을 가져옴
     imagenameList.push(imageName);
     boxInfoList.push(description);
+
+    console.log(boxInfoList);
+
 });
+
+
 
 function showSlide(slideIndex) {
     swiper.style.transform = `translateX(-${slideIndex * 800}px)`;
@@ -41,20 +46,9 @@ function showSlide(slideIndex) {
     saveBoundingBox(beforeSlide);
 
     removeSpecificBoundingBoxes();
-    let boundingBox_ = null;
+
     
-    for(let boxid in boundingBoxebuffer[currentSlide]){
-        boundingBox_ = document.createElement('div');
-        boundingBox_.className = 'bounding-box';
-        boundingBox_.style.position = 'absolute';
-        boundingBox_.style.border = '1px solid red';
-        boundingBox_.setAttribute('data-box-id', boxid);
-        boundingBox_.style.left = boundingBoxebuffer[currentSlide][boxid].left
-        boundingBox_.style.top  = boundingBoxebuffer[currentSlide][boxid].top
-        boundingBox_.style.width = boundingBoxebuffer[currentSlide][boxid].width
-        boundingBox_.style.height = boundingBoxebuffer[currentSlide][boxid].height
-        imageContainer.appendChild(boundingBox_);
-    }
+    drawingBoundingBox(currentSlide)
 
     // let boundingBox_ = null;
     // for (let Box of boundingBoxes[currentSlide]) {
@@ -100,7 +94,24 @@ bullets.forEach((bullet, index) => {
 
 showSlide(0);
 
+function drawingBoundingBox(currentSlide){
 
+    let boundingBox_ = null;
+    
+    for(let boxid in boundingBoxebuffer[currentSlide]){
+        boundingBox_ = document.createElement('div');
+        boundingBox_.className = 'bounding-box';
+        boundingBox_.style.position = 'absolute';
+        boundingBox_.style.border = '1px solid red';
+        boundingBox_.setAttribute('data-box-id', boxid);
+        boundingBox_.style.left = boundingBoxebuffer[currentSlide][boxid].left
+        boundingBox_.style.top  = boundingBoxebuffer[currentSlide][boxid].top
+        boundingBox_.style.width = boundingBoxebuffer[currentSlide][boxid].width
+        boundingBox_.style.height = boundingBoxebuffer[currentSlide][boxid].height
+        imageContainer.appendChild(boundingBox_);
+    };
+
+}
 function displayImageInfo(current, before) {
     document.getElementById('index').textContent = `CurrentslideIndex: ${current}, BeforeslideIndex: ${before},`;
 }

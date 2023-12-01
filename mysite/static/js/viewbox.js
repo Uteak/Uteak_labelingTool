@@ -5,6 +5,8 @@ let dragStartX = 0;
 let dragStartY = 0;
 let boundingBox = null;
 
+const imagepageWidth = imageContainer.getBoundingClientRect().width;
+const imagepageHeight = imageContainer.getBoundingClientRect().height;
 const imagepageX = imageContainer.getBoundingClientRect().left;
 const imagepageY = imageContainer.getBoundingClientRect().top;
 
@@ -21,7 +23,8 @@ for (let i = 0; i < imageCount; i++) {
   boundingBoxebuffer[i] = {}; // someValue는 해당 키에 할당하고 싶은 값입니다.
 }
 
-//drawingInit(currentSlide);
+drawingInit();
+drawingBoundingBox(0);
 
 imageContainer.addEventListener('mousedown', (event) => {
 
@@ -164,7 +167,7 @@ function saveBoundingBox(saveSlide){
     let widthValue = parseFloat(boundingBox.style.width);
     let heightValue = parseFloat(boundingBox.style.height);
 
-    fetch('/fileupload/image_slider/', {
+    fetch('/labeling_tool/image_slider/', {
       method: 'POST',
       headers: {
           'X-CSRFToken': getCookie('csrftoken'), // CSRF 토큰
@@ -195,28 +198,74 @@ function getCookie(name) {
   return cookieValue;
 }
 
-function drawingInit(currentSlide){
-  const infoText = "";
-  const text = boxInfoList[currentSlide];
-  document.getElementById('BoxesInfo').textContent = text;
-  // for(let textContent of boxInfoList[currentSlide]){
-  //   infoText += textContent + "\n";
-  // }
+function drawingInit(){
 
-  const lines = text.split('\n').map(line => {
-    return line.split(' ').map(Number);
-  });
+  let text = "";
+  for (let index in boxInfoList) {
+    
+    text += index + '\n';
+    if (!boxInfoList[index]){
+      text += "none" + '\n';
+    }
+    else{
+      text += boxInfoList[index] + '\n';
+    }
+
+    
+    
+    // const lines = text.split('\n').map(line => {
+    //   return line.split(' ').map(Number);
+    // });
+
+    // const formattedData = lines.slice(0, -1).map(coords => ({
+    //   x1: coords[0],
+    //   y1: coords[1],
+    //   x2: coords[2],
+    //   y2: coords[3]
+    // }));
+
+    // let infoText = ""; // infoText 변수 초기화
+    // for (let textContent of formattedData) {
+    //   const width = Math.round(textContent["x2"] * imagepageWidth);
+    //   const height = Math.round(textContent["y2"] * imagepageHeight);
+    //   const left = Math.round(imagepageWidth * textContent["x1"]) - Math.round(width * 0.5);
+    //   const top = Math.round(imagepageHeight * textContent["y1"]) - Math.round(height * 0.5);
+    //   infoText += `left: ${left}, top: ${top}, width: ${width}, height: ${height}\n`; // 각 객체의 데이터를 문자열로 변환하고 줄 바꿈 추가
+
+    //   boundingBoxebuffer[index][boxId] = {
+    //     left: boundingBox.style.left,
+    //     top: boundingBox.style.top,
+    //     width: boundingBox.style.width,
+    //     height: boundingBox.style.height
+    //   }
+    //   document.getElementById('BoxesInfo').textContent = infoText;
+    //   boxId ++;
+    // }
+  }
+
+  document.getElementById('BoxesInfo').textContent = text;
+  // const text = boxInfoList[currentSlide];
+
+  // const lines = text.split('\n').map(line => {
+  //   return line.split(' ').map(Number);
+  // });
 
   // 각 숫자 배열을 좌표 객체로 변환
-  const formattedData = lines.map(coords => ({
-    x1: coords[0],
-    y1: coords[1],
-    x2: coords[2],
-    y2: coords[3]
-  }));
+  // const formattedData = lines.slice(0, -1).map(coords => ({
+  //   x1: coords[0],
+  //   y1: coords[1],
+  //   x2: coords[2],
+  //   y2: coords[3]
+  // }));
 
-  for(let textContent of formattedData){
-    infoText += textContent + "\n";
-  }
-  document.getElementById('BoxesInfo').textContent = infoText;
+  // let infoText = ""; // infoText 변수 초기화
+  // for (let textContent of formattedData) {
+  //   const width = Math.round(textContent["x2"] * imagepageWidth);
+  //   const height = Math.round(textContent["y2"] * imagepageHeight);
+  //   const left = Math.round(imagepageWidth * textContent["x1"]) - Math.round(width * 0.5);
+  //   const top = Math.round(imagepageHeight * textContent["y1"]) - Math.round(height * 0.5);
+  //   infoText += `left: ${left}, top: ${top}, width: ${width}, height: ${height}\n`; // 각 객체의 데이터를 문자열로 변환하고 줄 바꿈 추가
+  // }
+
+  // document.getElementById('BoxesInfo').textContent = infoText;
 }
