@@ -3,16 +3,7 @@
 {% load bootstrap4 %}
 {% block content %}
 <div class="container">
-    <form method='POST' action="" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        <div class="form-group m-3">
-            <label>Upload files</label>
-            <input required name="files" type="file" multiple class="form-control-file">
-        </div>
-    
-        <button type='submit' class="btn btn-primary m-3">Submit</button>
-    </form>
+    Upload Success
 
     {% comment %} <form method='POST' action="" enctype="multipart/form-data">
         {% csrf_token %}

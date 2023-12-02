@@ -10,6 +10,11 @@ let currentSlide = 0;
 let beforeSlide = 0;
 let imagenameList = [];
 let boxInfoList = [];
+let boundingBoxebuffer = {}; 
+
+for (let i = 0; i < imageCount; i++) {
+  boundingBoxebuffer[i] = {}; // someValue는 해당 키에 할당하고 싶은 값입니다.
+}
 
 slides.forEach(slide => {
     const img = slide.querySelector('img'); // 각 슬라이드 내의 이미지 태그 찾기
@@ -21,7 +26,7 @@ slides.forEach(slide => {
     imagenameList.push(imageName);
     boxInfoList.push(description);
 
-    console.log(boxInfoList);
+    //console.log(boxInfoList);
 
 });
 
@@ -43,6 +48,7 @@ function showSlide(slideIndex) {
     document.getElementById('Page').textContent = `imagenameList: ${imagenameList[currentSlide]}`;
 
     displayImageInfo(currentSlide, beforeSlide);
+    console.log(beforeSlide);
     saveBoundingBox(beforeSlide);
 
     removeSpecificBoundingBoxes();
@@ -121,3 +127,38 @@ function removeSpecificBoundingBoxes() {
     boxes.forEach(box => box.remove());
 }
 
+function saveBoundingBox(saveSlide){
+
+    // console.log(saveSlide);
+    // if (!boundingBoxebuffer){
+    //     return;
+    // }
+
+    fetch('/labeling_tool/image_slider/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'), // CSRF 토큰
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          boxinfo : boundingBoxebuffer[saveSlide],
+          imageName : imagenameList[saveSlide],
+          currentSlide : saveSlide
+        })
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }

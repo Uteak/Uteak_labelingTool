@@ -22,19 +22,32 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-
+    
 class Photo(models.Model):
     class Meta:
         verbose_name = 'Photo'
         verbose_name_plural = 'Photos'
-    
+
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, blank=True)
     image = models.ImageField(null=False, upload_to="static/images/", blank=False)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField()  # 변경된 부분
 
     def __str__(self):
         return self.image.name[14:]
+        
+# class Photo(models.Model):
+#     class Meta:
+#         verbose_name = 'Photo'
+#         verbose_name_plural = 'Photos'
+    
+#     category = models.ForeignKey(
+#         Category, on_delete=models.SET_NULL, null=True, blank=True)
+#     image = models.ImageField(null=False, upload_to="static/images/", blank=False)
+#     description = models.TextField(null=True, blank=True)
+
+#     def __str__(self):
+#         return self.image.name[14:]
     
 class BoundingBox(models.Model):
     left = models.FloatField()

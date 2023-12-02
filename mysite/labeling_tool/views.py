@@ -5,6 +5,26 @@ import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+def upload_file(request):
+    if request.method == 'POST':
+        uploaded_files = request.FILES.getlist('files')
+        images = [file for file in uploaded_files if file.content_type.startswith('image/')]
+        text_files = {file.name.split('.')[0]: file for file in uploaded_files if file.content_type == 'text/plain'}
+
+        for image in images:
+            image_base_name = image.name.split('.')[0]
+            description = ''
+            if image_base_name in text_files:
+                description_file = text_files[image_base_name]
+                description = description_file.read().decode('utf-8')
+            
+            photo = Photo(image=image, description=description)
+            photo.save()
+
+        return render(request, 'upload_success.html')
+    else:
+        return render(request, 'fileupload.html')
+    
 def fileUpload(request):
     user = request.user
 
