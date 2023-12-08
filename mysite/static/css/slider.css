@@ -83,3 +83,40 @@
 .carousel_circle.active {
     background-color: #333;
 }
+
+.controls {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.label-button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.label-button:hover {
+    background-color: #0056b3;
+}
+
+#colorPicker {
+    height: 40px; /* Adjust as needed */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#buttonContainer {
+    position: absolute;
+    top: 130px;
+    left: 30px;
+    cursor: pointer;
+}

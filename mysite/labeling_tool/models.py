@@ -23,6 +23,14 @@ class Category(models.Model):
     def __str__(self):
         return self.name
     
+class LabelList(models.Model):
+
+    name = models.CharField(max_length=100)
+    color = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.name
+    
 class Photo(models.Model):
     class Meta:
         verbose_name = 'Photo'

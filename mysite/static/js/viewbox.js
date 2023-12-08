@@ -10,19 +10,80 @@ const imagepageHeight = imageContainer.getBoundingClientRect().height;
 const imagepageX = imageContainer.getBoundingClientRect().left;
 const imagepageY = imageContainer.getBoundingClientRect().top;
 
+let currentIndex = 0;
+let currentColor = labelListbuffer[currentIndex];
+//let labelListbuffer = {};
+
 let currentWidth = 0;
 let currentHeight = 0;
 let currentleft = 0;
 let currenttop = 0;
 
+
 let boundingBoxInfo = { left: 0, top: 0, width: 0, height: 0 }; 
 let boxId = 0; 
+let labelindex = 0;
 let isDrawingInitCalled = false;
 // let boundingBoxebuffer = {}; 
 
 // for (let i = 0; i < imageCount; i++) {
 //   boundingBoxebuffer[i] = {}; // someValue는 해당 키에 할당하고 싶은 값입니다.
 // }
+
+
+// document.getElementById('colorPicker').addEventListener('input', function(event) {
+//   document.getElementById('labelButton').style.backgroundColor = event.target.value;
+//   currentColor = event.target.value;
+// });
+
+
+// document.getElementById('createButton').addEventListener('click', function() {
+//   var labelName = document.getElementById('labelInput').value;
+  
+
+//   if (labelName.trim() !== '') {
+//       // Create the button
+//       var newButton = document.createElement('button');
+//       newButton.textContent = labelName;
+//       labelListbuffer[labelName] = labelindex;
+//       labelindex ++;
+//       newButton.classList.add('label-button');
+//       newButton.style.backgroundColor = document.getElementById('colorPicker').value;
+
+//       // Add styles to the button
+//       newButton.style.padding = '10px 15px';
+//       newButton.style.border = 'none';
+//       newButton.style.borderRadius = '5px';
+//       newButton.style.cursor = 'pointer';
+
+//       newButton.addEventListener('click', function() {
+//         // Access and use the button's color
+//         var buttonColor = newButton.style.backgroundColor;
+//         const nameoflabel = newButton.textContent;
+//         // You can use the buttonColor variable as needed
+//         console.log("Clicked button color: " + buttonColor);
+//         document.getElementById('ButtonColor').textContent = `CurrentColor: ${buttonColor}, labelName: ${nameoflabel}, labelindex: ${labelListbuffer[nameoflabel]}`;
+//         // Additional logic can be added here
+//       });
+//       // Create a color picker for the button
+//       var buttonColorPicker = document.createElement('input');
+//       buttonColorPicker.type = 'color';
+//       buttonColorPicker.value = document.getElementById('colorPicker').value;
+
+//       // Event listener to update the button color
+//       buttonColorPicker.addEventListener('input', function() {
+//           newButton.style.backgroundColor = buttonColorPicker.value;
+
+//       });
+
+//       // Append the button and its color picker to the container
+//       var container = document.createElement('div');
+//       container.appendChild(newButton);
+//       container.appendChild(buttonColorPicker);
+//       //document.getElementById('buttonContainer').appendChild(container);
+//   }
+// });
+
 
 drawingInit();
 //drawingBoundingBox(0);
@@ -36,7 +97,7 @@ imageContainer.addEventListener('mousedown', (event) => {
     boundingBox = document.createElement('div');
     boundingBox.className = 'bounding-box';
     boundingBox.style.position = 'absolute';
-    boundingBox.style.border = '1px solid red';
+    boundingBox.style.border = '1px solid ' + currentColor;
     imageContainer.appendChild(boundingBox);
   }
 });
@@ -93,6 +154,7 @@ imageContainer.addEventListener('mouseup', (event) => {
       //drawingInit(); 
 
       boundingBoxebuffer[currentSlide][boxId] = {
+        labelindex : currentIndex,
         left: boundingBox.style.left,
         top: boundingBox.style.top,
         width: boundingBox.style.width,
@@ -144,11 +206,13 @@ imageContainer.addEventListener('contextmenu', (event) => {
 function displayAllBoundingBoxesInfo() {
   let infoText = ""
   for(let boxid in boundingBoxebuffer[currentSlide]){
+      const index = boundingBoxebuffer[currentSlide][boxid].labelindex
+      const color = labelListbuffer[index];
       const left = boundingBoxebuffer[currentSlide][boxid].left
       const top  = boundingBoxebuffer[currentSlide][boxid].top
       const width = boundingBoxebuffer[currentSlide][boxid].width
       const height = boundingBoxebuffer[currentSlide][boxid].height
-      infoText += "boxid : " + boxid + "  width : " + width +  "  height : " + height + "  left : " + left + "  top : " + top + "\n";
+      infoText += "color :" + color + " index :" + index + " boxid : " + boxid + "  width : " + width +  "  height : " + height + "  left : " + left + "  top : " + top + "\n";
   }
 
   // let infoText = boundingBoxebuffer[currentSlide].map((boxid, index) => 
@@ -160,23 +224,6 @@ function displayAllBoundingBoxesInfo() {
 // 바운딩 박스 정보를 화면에 표시하는 함수
 function displayBoundingBoxInfo(info) {
   document.getElementById('boundingBoxInfo').textContent = `Left: ${info.left}, Top: ${info.top}, Width: ${info.width}, Height: ${info.height}`;
-}
-
-
-
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
-      }
-  }
-  return cookieValue;
 }
 
 function drawingInit(){
@@ -206,20 +253,20 @@ function drawingInit(){
     });
 
     const formattedData = lines.slice(0, -1).map(coords => ({
-      x1: coords[0],
-      y1: coords[1],
-      x2: coords[2],
-      y2: coords[3]
+      index : coords[0],
+      x1: coords[1],
+      y1: coords[2],
+      x2: coords[3],
+      y2: coords[4]
     }));
 
     let infoText = ""; // infoText 변수 초기화
     for (let textContent of formattedData) {
       
-      console.log(textContent);
       if (!textContent){
-        console.log("None None None");
         continue;
       }
+      const labelnum = textContent["index"];
       const width = Math.round(textContent["x2"] * imagepageWidth);
       const height = Math.round(textContent["y2"] * imagepageHeight);
       const left = Math.round(imagepageWidth * textContent["x1"]) - Math.round(width * 0.5);
@@ -227,6 +274,7 @@ function drawingInit(){
       infoText += `left: ${left}, top: ${top}, width: ${width}, height: ${height}\n`; // 각 객체의 데이터를 문자열로 변환하고 줄 바꿈 추가
 
       boundingBoxebuffer[index][boxId] = {
+        labelindex : labelnum,
         left: left + 'px',
         top: top + 'px',
         width: width + 'px',
@@ -240,29 +288,4 @@ function drawingInit(){
 
   drawingBoundingBox(0);
   isDrawingInitCalled = true;
-  //document.getElementById('BoxesInfo').textContent = boxinfoText;
-  // const text = boxInfoList[currentSlide];
-
-  // const lines = text.split('\n').map(line => {
-  //   return line.split(' ').map(Number);
-  // });
-
-  // 각 숫자 배열을 좌표 객체로 변환
-  // const formattedData = lines.slice(0, -1).map(coords => ({
-  //   x1: coords[0],
-  //   y1: coords[1],
-  //   x2: coords[2],
-  //   y2: coords[3]
-  // }));
-
-  // let infoText = ""; // infoText 변수 초기화
-  // for (let textContent of formattedData) {
-  //   const width = Math.round(textContent["x2"] * imagepageWidth);
-  //   const height = Math.round(textContent["y2"] * imagepageHeight);
-  //   const left = Math.round(imagepageWidth * textContent["x1"]) - Math.round(width * 0.5);
-  //   const top = Math.round(imagepageHeight * textContent["y1"]) - Math.round(height * 0.5);
-  //   infoText += `left: ${left}, top: ${top}, width: ${width}, height: ${height}\n`; // 각 객체의 데이터를 문자열로 변환하고 줄 바꿈 추가
-  // }
-
-  // document.getElementById('BoxesInfo').textContent = infoText;
 }

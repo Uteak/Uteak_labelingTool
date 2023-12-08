@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .forms import FileUploadForm
-from .models import FileUpload, Category, Photo, BoundingBox
+from .models import FileUpload, Category, Photo, BoundingBox, LabelList
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -90,12 +90,50 @@ def test_view(request):
         return render(request, 'drawing.html', {'images': images})
     
 from django.shortcuts import get_object_or_404
+
+def lablelist_upload(request):
+    
+    defualtcolor =  [ "#FF0000", "#0000FF", "#00FF00", "#FF00FF", "#D8F781", "#8A4B08", "#FE9A2E" ,
+                     "#0B610B", "#00FFFF", "#8000FF", "#DF01D7", "#610B21", "#1C1C1C", "#F7FE2E",
+                      "#2F0B3A", "#8A2908", "#2A1B0A", "#190710", "#819FF7", "#0B6121"]
+    
+    if request.method == 'GET':
+        Labellist = LabelList.objects.all()
+        return render(request, 'uploadlabellist.html', {'labellist' : Labellist})
+        
+    if request.method == 'POST':
+        
+        label_data = request.POST.get('labelData')
+        label_data = json.loads(label_data)
+        
+        labellist = [[] for _ in range(len(label_data))]
+        print(label_data, type(label_data))
+        print(labellist)
+        
+        for i, (key, index) in enumerate(label_data.items()):
+            labelName = key
+            print(index, type(index))
+            color =  defualtcolor[index % len(defualtcolor)]
+            labellist[index] = [labelName, color]
+            
+        LabelList.objects.all().delete()
+        for labelName, labelcolor in labellist:
+            
+            labellist_data = LabelList(name=labelName, color=labelcolor)
+            labellist_data.save()
+
+        print(labellist)
+
+
+    return render(request, 'uploadlabellist.html')
     
 def image_slider_view(request):
     if request.method == 'GET':
         images = Photo.objects.all()
+        labelList = LabelList.objects.all()
         print(images)
-        return render(request, 'slider.html', {'images': images})
+        print(labelList)
+        return render(request, 'slider.html', {'images': images, 'labelList': labelList})
     
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -106,7 +144,7 @@ def image_slider_view(request):
         infotext = ""
         for key, value in boxinfo.items():
             print(value)
-            
+            labelindex = int(value["labelindex"])
             x = float(value["left"][:-2])
             y = float(value["top"][:-2])
             width = float(value["width"][:-2])
@@ -121,7 +159,7 @@ def image_slider_view(request):
             nH = height / 500
             nH = round(nH, 6)
             #print(nCx, nCy, nW, nH)
-            infotext += str(nCx) + " " + str(nCy) + " " + str(nW) + " " +  str(nH) + "\n"
+            infotext += str(labelindex) + " " + str(nCx) + " " + str(nCy) + " " + str(nW) + " " +  str(nH) + "\n"
         print(infotext)
         image_url = "static/images/" + image_name
         photo = Photo.objects.filter(image=image_url).first()

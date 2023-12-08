@@ -5,16 +5,82 @@ const nextButtons = document.querySelectorAll('.carousel_next');
 const bullets = document.querySelectorAll('.carousel_circle');
 const imageCount = document.querySelector('.carousel_slide').dataset.imageCount;
 const slides = document.querySelectorAll('.carousel_slide');
+const labelButtons = document.querySelectorAll('.labelButtonList');
 
 let currentSlide = 0;
 let beforeSlide = 0;
 let imagenameList = [];
 let boxInfoList = [];
 let boundingBoxebuffer = {}; 
+let labelListbuffer = {};
 
 for (let i = 0; i < imageCount; i++) {
-  boundingBoxebuffer[i] = {}; // someValue는 해당 키에 할당하고 싶은 값입니다.
+  boundingBoxebuffer[i] = {};
 }
+
+function ten(){
+    showSlide(10);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var carouselPagination = document.querySelector('.carousel_pagination');
+    var isDragging = false;
+    var startX;
+    var initialScrollLeft;
+
+    carouselPagination.addEventListener('mousedown', function (e) {
+        isDragging = true;
+        startX = e.pageX - carouselPagination.offsetLeft;
+        initialScrollLeft = carouselPagination.scrollLeft;
+    });
+
+    carouselPagination.addEventListener('mouseup', function () {
+        if (!isDragging) return;
+        isDragging = false;
+        // 여기에 페이지 넘김 로직을 추가하세요.
+        showSlide(currentSlide);
+    });
+
+    carouselPagination.addEventListener('mousemove', function (e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        var currentX = e.pageX - carouselPagination.offsetLeft;
+        var walk = (currentX - startX);
+        
+        // walk 값에 따라 페이지 넘김 로직을 호출하세요.
+        // 예를 들어, walk 값이 양수면 다음 페이지, 음수면 이전 페이지로 넘깁니다.
+    });
+});
+
+labelButtons.forEach((buttons, index) => {
+    console.log("Clicked button color");
+    const labelcolor = buttons.querySelector('input');
+    const labelbutton = buttons.querySelector('button');
+    labelListbuffer[index] = labelcolor.value;
+
+    labelbutton.addEventListener('click', function() {
+      // Access and use the button's color
+      var buttonColor = labelcolor.value;
+      const nameoflabel = labelbutton.textContent;
+      // You can use the buttonColor variable as needed
+      console.log("Clicked button color: " + buttonColor);
+      currentColor = labelcolor.value;
+      currentIndex = index;
+      
+      // Additional logic can be added here
+      document.getElementById('labellistinfo').textContent = `label index : ${currentIndex}, label name : ${nameoflabel}`;
+    });
+  
+    labelcolor.addEventListener('input', function() {
+      labelbutton.style.backgroundColor = labelcolor.value;
+      currentColor = labelcolor.value;
+      currentIndex = index;
+      labelListbuffer[currentIndex] = currentColor;
+
+      removeSpecificBoundingBoxes();
+      drawingBoundingBox(currentSlide);
+    });
+})
 
 slides.forEach(slide => {
     const img = slide.querySelector('img'); // 각 슬라이드 내의 이미지 태그 찾기
@@ -29,7 +95,6 @@ slides.forEach(slide => {
     //console.log(boxInfoList);
 
 });
-
 
 
 function showSlide(slideIndex) {
@@ -48,13 +113,12 @@ function showSlide(slideIndex) {
     document.getElementById('Page').textContent = `imagenameList: ${imagenameList[currentSlide]}`;
 
     displayImageInfo(currentSlide, beforeSlide);
-    console.log(beforeSlide);
     saveBoundingBox(beforeSlide);
 
     removeSpecificBoundingBoxes();
 
     
-    drawingBoundingBox(currentSlide)
+    drawingBoundingBox(currentSlide);
 
     // let boundingBox_ = null;
     // for (let Box of boundingBoxes[currentSlide]) {
@@ -81,6 +145,7 @@ prevButtons.forEach((prevButton) => {
         }
     });
 
+    
 });
 
 nextButtons.forEach((nextButton) => {
@@ -108,7 +173,10 @@ function drawingBoundingBox(currentSlide){
         boundingBox_ = document.createElement('div');
         boundingBox_.className = 'bounding-box';
         boundingBox_.style.position = 'absolute';
-        boundingBox_.style.border = '1px solid red';
+        const idx = boundingBoxebuffer[currentSlide][boxid].labelindex;
+        color = labelListbuffer[idx];
+        console.log(color);
+        boundingBox_.style.border = '1px solid ' + color;
         boundingBox_.setAttribute('data-box-id', boxid);
         boundingBox_.style.left = boundingBoxebuffer[currentSlide][boxid].left
         boundingBox_.style.top  = boundingBoxebuffer[currentSlide][boxid].top
