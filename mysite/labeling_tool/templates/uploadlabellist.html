@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% block content %}
+<html>
+<head>
+    <title>Label List Webpage</title>
+    <!-- CSS 파일 연결 -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/labellist.css' %}">
+</head>
+<body>
+    
+
+    <div class="controls">
+        <input type="text" id="labelInput" placeholder="Enter label name">
+        <input type="color" id="colorPicker" value="#007bff">
+        <button id="createButton">Create Button</button>
+    </div>  
+
+
+    <form method='POST' action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="labelData" id="labelData">
+        <button id='submitButton' type='submit' class="btn btn-primary m-3">Submit</button>
+    </form>
+
+    <div id="buttonContainer">
+        {% for label in labellist %}
+            <div class = "labelButtonList">
+                <button class="btn btn-primary m-1" data-name= {{ label.name }}> {{label.name}} </button>
+            <div>
+        {% endfor %}
+    </div>
+
+    <script src="{% static 'js/labellist.js' %}"></script>
+</body>
+</html>
+
+{% endblock%}

@@ -1,5 +1,12 @@
-.carousel_main {
-    width: 800px;
+
+body {
+    background-color: #333; /* 어두운 회색으로 설정 */
+}
+
+.carousel_main{
+    width: 970px;
+    cursor: crosshair; 
+    color: red;
     position: relative;
     overflow: hidden;
     margin: 0 auto;
@@ -27,7 +34,7 @@
 .carousel_button_container {
     position: static;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
 }
 
@@ -47,7 +54,7 @@
     padding-top: 5px;
     padding-bottom: 5px;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
     cursor: pointer;
 }
@@ -58,26 +65,31 @@
     padding-top: 5px;
     padding-bottom: 5px;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
     cursor: pointer;
 }
 
-.carousel_pagination {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
+.box_controls {
+    color: white;
 }
 
-.carousel_circle {
-    width: 10px;
-    height: 10px;
-    background-color: #aaa;
-    border-radius: 50%;
-    margin: 0 5px;
-    cursor: pointer;
+.labellistinfo {
+    color: white;
+}
+
+.Page {
+    color: white;
+}
+
+.index {
+    color: white;
+}
+
+.pagecontrol {
+    width: 80%; /* Adjust the width as per your preference */
+    margin: 0 auto; /* Center-align the element horizontally */
+    display: block; /* Ensure it's a block-level element for margin: 0 auto to work */
 }
 
 .carousel_circle.active {
@@ -103,6 +115,9 @@
     font-size: 16px;
 }
 
+.labelButtonList {
+    color: white;
+}
 .label-button:hover {
     background-color: #0056b3;
 }
@@ -116,7 +131,7 @@
 
 #buttonContainer {
     position: absolute;
-    top: 130px;
+    top: 80px;
     left: 30px;
     cursor: pointer;
 }

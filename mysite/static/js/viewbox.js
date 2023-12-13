@@ -1,14 +1,11 @@
-const result = document.getElementById('result');
+//const result = document.getElementById('result');
 
 let isDragging = false;
 let dragStartX = 0;
 let dragStartY = 0;
 let boundingBox = null;
 
-const imagepageWidth = imageContainer.getBoundingClientRect().width;
-const imagepageHeight = imageContainer.getBoundingClientRect().height;
-const imagepageX = imageContainer.getBoundingClientRect().left;
-const imagepageY = imageContainer.getBoundingClientRect().top;
+
 
 let currentIndex = 0;
 let currentColor = labelListbuffer[currentIndex];
@@ -24,69 +21,10 @@ let boundingBoxInfo = { left: 0, top: 0, width: 0, height: 0 };
 let boxId = 0; 
 let labelindex = 0;
 let isDrawingInitCalled = false;
-// let boundingBoxebuffer = {}; 
 
-// for (let i = 0; i < imageCount; i++) {
-//   boundingBoxebuffer[i] = {}; // someValue는 해당 키에 할당하고 싶은 값입니다.
-// }
-
-
-// document.getElementById('colorPicker').addEventListener('input', function(event) {
-//   document.getElementById('labelButton').style.backgroundColor = event.target.value;
-//   currentColor = event.target.value;
-// });
-
-
-// document.getElementById('createButton').addEventListener('click', function() {
-//   var labelName = document.getElementById('labelInput').value;
-  
-
-//   if (labelName.trim() !== '') {
-//       // Create the button
-//       var newButton = document.createElement('button');
-//       newButton.textContent = labelName;
-//       labelListbuffer[labelName] = labelindex;
-//       labelindex ++;
-//       newButton.classList.add('label-button');
-//       newButton.style.backgroundColor = document.getElementById('colorPicker').value;
-
-//       // Add styles to the button
-//       newButton.style.padding = '10px 15px';
-//       newButton.style.border = 'none';
-//       newButton.style.borderRadius = '5px';
-//       newButton.style.cursor = 'pointer';
-
-//       newButton.addEventListener('click', function() {
-//         // Access and use the button's color
-//         var buttonColor = newButton.style.backgroundColor;
-//         const nameoflabel = newButton.textContent;
-//         // You can use the buttonColor variable as needed
-//         console.log("Clicked button color: " + buttonColor);
-//         document.getElementById('ButtonColor').textContent = `CurrentColor: ${buttonColor}, labelName: ${nameoflabel}, labelindex: ${labelListbuffer[nameoflabel]}`;
-//         // Additional logic can be added here
-//       });
-//       // Create a color picker for the button
-//       var buttonColorPicker = document.createElement('input');
-//       buttonColorPicker.type = 'color';
-//       buttonColorPicker.value = document.getElementById('colorPicker').value;
-
-//       // Event listener to update the button color
-//       buttonColorPicker.addEventListener('input', function() {
-//           newButton.style.backgroundColor = buttonColorPicker.value;
-
-//       });
-
-//       // Append the button and its color picker to the container
-//       var container = document.createElement('div');
-//       container.appendChild(newButton);
-//       container.appendChild(buttonColorPicker);
-//       //document.getElementById('buttonContainer').appendChild(container);
-//   }
-// });
 
 
 drawingInit();
-//drawingBoundingBox(0);
 
 imageContainer.addEventListener('mousedown', (event) => {
 
@@ -97,7 +35,8 @@ imageContainer.addEventListener('mousedown', (event) => {
     boundingBox = document.createElement('div');
     boundingBox.className = 'bounding-box';
     boundingBox.style.position = 'absolute';
-    boundingBox.style.border = '1px solid ' + currentColor;
+    const boxsize = BoxsizeControl.value + 'px';
+    boundingBox.style.border = `${boxsize} solid` + currentColor;
     imageContainer.appendChild(boundingBox);
   }
 });
@@ -118,9 +57,6 @@ imageContainer.addEventListener('mousemove', (event) => {
     boundingBox.style.width = currentWidth + 'px';
     boundingBox.style.height = currentHeight + 'px';
 
-    document.getElementById('mouseCoordinates').textContent = `X: ${currentleft}, Y: ${currentWtop}`;
-    document.getElementById('mouseCoordinatesXY').textContent = `X: ${currentWidth}, Y: ${currentHeight}`;
-
   }
 });
 
@@ -128,14 +64,12 @@ imageContainer.addEventListener('mouseup', (event) => {
   if (isDragging) {
     isDragging = false;
     // 여기에서 바운딩 박스에 대한 추가 처리를 할 수 있습니다.
-    
-    document.getElementById('mouseCoordinatesPage').textContent = `X * Y: ${currentWidth * currentHeight}`;
+
     if (event.button === 0 && currentWidth * currentHeight < 112){
       boundingBox.remove();     
     }
 
     if (!boundingBox.style.left){
-      document.getElementById('mouseCoordinatesPage').textContent = `error: error`;
       boundingBox.remove();
     }
 
@@ -148,10 +82,6 @@ imageContainer.addEventListener('mouseup', (event) => {
         height: boundingBox.style.height
       };
   
-      // 저장된 바운딩 박스 정보 출력
-      displayBoundingBoxInfo(boundingBoxInfo);
-      //displayAllBoundingBoxesInfo(); 
-      //drawingInit(); 
 
       boundingBoxebuffer[currentSlide][boxId] = {
         labelindex : currentIndex,
@@ -160,13 +90,12 @@ imageContainer.addEventListener('mouseup', (event) => {
         width: boundingBox.style.width,
         height: boundingBox.style.height
       }
-      // boundingBoxebuffer[currentSlide][boxId].push({
-      //   left: boundingBox.style.left,
-      //   top: boundingBox.style.top,
-      //   width: boundingBox.style.width,
-      //   height: boundingBox.style.height
-      // });
       
+      actionStack.push(
+        [
+          "create", 
+          boxId
+        ])
       boundingBox.setAttribute('data-box-id', boxId);      
       boxId++;      
       
@@ -177,54 +106,59 @@ imageContainer.addEventListener('mouseup', (event) => {
 
 imageContainer.addEventListener('contextmenu', (event) => {
   event.preventDefault();
-  // 저장된 모든 바운딩 박스 정보 출력
-  displayAllBoundingBoxesInfo();
+
   const currentX = event.pageX - imagepageX;
   const currentY = event.pageY - imagepageY;
-
-  //document.getElementById('mouseRight').textContent = `X: ${currentX}, Y: ${currentY}`;
   const boxes = imageContainer.querySelectorAll('.bounding-box');
+
+  let smallestBox = null;
+  let smallestArea = Number.MAX_VALUE; // 초기 값은 가장 큰값으로
+
   boxes.forEach(box => {
     const boxLeft = parseInt(box.style.left, 10);
     const boxTop = parseInt(box.style.top, 10);
-    const boxRight = boxLeft + parseInt(box.style.width, 10);
-    const boxBottom = boxTop + parseInt(box.style.height, 10);
+    const boxWidth = parseInt(box.style.width, 10);
+    const boxHeight = parseInt(box.style.height, 10);
+    const boxArea = boxWidth * boxHeight;
+    const boxRight = boxLeft + boxWidth;
+    const boxBottom = boxTop + boxHeight;
 
-    // 현재 마우스 위치가 박스 내부인지 확인
     if (boxLeft <= currentX && currentX <= boxRight && boxTop <= currentY && currentY <= boxBottom) {
-      const boxIdToRemove = parseInt(box.getAttribute('data-box-id'));
-      delete boundingBoxebuffer[currentSlide][boxIdToRemove];
-      //boundingBoxes[currentSlide] = boundingBoxes[currentSlide].filter(b => b.id !== boxIdToRemove);
-      document.getElementById('mouseCoordinatesPage').textContent = `currentSlide: ${currentSlide}, boxidtoRemove: ${boxIdToRemove}`;
-      box.remove();
+      if (boxArea < smallestArea) {
+        smallestBox = box;
+        smallestArea = boxArea;
+      }
     }
   });
 
+  if (smallestBox) {
+    const boxIdToRemove = parseInt(smallestBox.getAttribute('data-box-id'));
+    
+    // 삭제시 박스 인포 저장
+    actionStack.push(
+      [
+        'remove', 
+        boxIdToRemove, 
+        boundingBoxebuffer[currentSlide][boxIdToRemove].labelindex,
+        boundingBoxebuffer[currentSlide][boxIdToRemove].left,
+        boundingBoxebuffer[currentSlide][boxIdToRemove].top,
+        boundingBoxebuffer[currentSlide][boxIdToRemove].width,
+        boundingBoxebuffer[currentSlide][boxIdToRemove].height,
+    ])
+
+    delete boundingBoxebuffer[currentSlide][boxIdToRemove];
+    smallestBox.remove();
+  }
 });
 
-// 모든 바운딩 박스 정보를 화면에 표시하는 함수
-function displayAllBoundingBoxesInfo() {
-  let infoText = ""
-  for(let boxid in boundingBoxebuffer[currentSlide]){
-      const index = boundingBoxebuffer[currentSlide][boxid].labelindex
-      const color = labelListbuffer[index];
-      const left = boundingBoxebuffer[currentSlide][boxid].left
-      const top  = boundingBoxebuffer[currentSlide][boxid].top
-      const width = boundingBoxebuffer[currentSlide][boxid].width
-      const height = boundingBoxebuffer[currentSlide][boxid].height
-      infoText += "color :" + color + " index :" + index + " boxid : " + boxid + "  width : " + width +  "  height : " + height + "  left : " + left + "  top : " + top + "\n";
-  }
+BoxsizeControl.addEventListener("input", function() {
+    removeSpecificBoundingBoxes();
+    drawingBoundingBox(currentSlide);
+    boxsizeValueSpan.textContent = BoxsizeControl.value;
+})
 
-  // let infoText = boundingBoxebuffer[currentSlide].map((boxid, index) => 
-  //   `Box ${index + 1}: id: ${boxid}, Left: ${boundingBoxebuffer[currentSlide][boxid].left}, Top: ${boundingBoxebuffer[currentSlide][boxid].top}, 
-  //   Width: ${boundingBoxebuffer[currentSlide][boxid].width}, Height: ${boundingBoxebuffer[currentSlide][boxid].height}`).join('\n');
 
-  document.getElementById('boundingBoxesInfo').textContent = infoText;
-}
-// 바운딩 박스 정보를 화면에 표시하는 함수
-function displayBoundingBoxInfo(info) {
-  document.getElementById('boundingBoxInfo').textContent = `Left: ${info.left}, Top: ${info.top}, Width: ${info.width}, Height: ${info.height}`;
-}
+// 박스 정보를 데이터 베이스에서 불러와 초기화해주는 함수 
 
 function drawingInit(){
 
@@ -235,14 +169,6 @@ function drawingInit(){
   let drawingtext = "";
   let boxinfoText = "";
   for (let index in boxInfoList) {
-
-    // drawingtext += index + '\n';
-    // if (!boxInfoList[index]){
-    //   drawingtext += "none" + '\n';
-    // }
-    // else{
-    //   drawingtext += boxInfoList[index];
-    // }
 
     boxinfoText += index + " : "  +  '\n';
     boxinfoText += boxInfoList[index] +  '\n';
@@ -281,8 +207,6 @@ function drawingInit(){
         height: height + 'px',
       }
       boxId ++;
-
-
     }
   }
 
