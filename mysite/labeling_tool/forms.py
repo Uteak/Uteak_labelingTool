@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 from django import forms
-from .models import FileUpload, Photo, LabelList
+from .models import Photo, LabelList
 
 # class FileUploadForm(ModelForm):
 #     class Meta:
@@ -11,7 +11,7 @@ from .models import FileUpload, Photo, LabelList
 class FileUploadForm(ModelForm):
     class Meta:
         model = Photo
-        fields = ['category', 'image', 'description']
+        fields = ['image', 'description']
         
         
 class LabelListForm(ModelForm):

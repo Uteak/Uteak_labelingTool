@@ -1,9 +1,14 @@
 from django.shortcuts import render, redirect
 from .forms import FileUploadForm
-from .models import FileUpload, Category, Photo, BoundingBox, LabelList
+from .models import Photo, LabelList
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+
+import os
+import zipfile
+from django.conf import settings
+from io import BytesIO
 
 def upload_file(request):
     if request.method == 'POST':
@@ -25,71 +30,51 @@ def upload_file(request):
     else:
         return render(request, 'fileupload.html')
     
-def fileUpload(request):
-    user = request.user
+def download_description(request, photo_id):
+    # Get the Photo object based on the provided ID
+    try:
+        photo = Photo.objects.get(id=photo_id)
+    except Photo.DoesNotExist:
+        return HttpResponse("Photo not found", status=404)
 
-    #categories = user.category_set.all()
-
-    if request.method == 'POST':
-        data = request.POST
-        images = request.FILES.getlist('images')
-
-        #if data['category'] != 'none':
-        #    category = Category.objects.get(id=data['category'])
-        
-        # elif data['category_new'] != '':
-        #     category, created = Category.objects.get_or_create(
-        #         user=user,
-        #         name=data['category_new'])
-        # else:
-        #     category = None
-
-        for image in images:
-            photo = Photo.objects.create(
-                # category=category,
-                description=data['description'],
-                image=image,
-            )
-
-        return redirect('fileupload')
+    # Create a HttpResponse with text content
+    response = HttpResponse(photo.description, content_type='text/plain')
+    # Set the HTTP header for downloading
+    response['Content-Disposition'] = f'attachment; filename="{photo.image.name}_description.txt"'
     
-    fileuploadForm = FileUploadForm
-    context = {'fileuploadForm': fileuploadForm}
-    return render(request, 'fileupload.html', context)
+    return response
 
-    # if request.method == 'POST':
-    #     print(request.POST)
-    #     print(request.FILES)
-    #     title = request.POST['title']
-    #     content = request.POST['content']
-    #     img = request.FILES["imgfile"]
-    #     fileupload = FileUpload(
-    #         title=title,
-    #         content=content,
-    #         imgfile=img,
-    #     )
-    #     fileupload.save()
-    #     return redirect('fileupload')
-    # else:
-    #     fileuploadForm = FileUploadForm
-    #     context = {
-    #         'fileuploadForm': fileuploadForm,
-    #     }
-    #     return render(request, 'fileupload.html', context)
+def download_all_descriptions(request):
+    # Create a zip file in memory
+    zip_buffer = BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'a', zipfile.ZIP_DEFLATED, False) as zip_file:
+        for photo in Photo.objects.all():
+            # Name for the individual text file
+            file_name = photo.image.name
+            if ".jpg" in file_name:
+                file_name = file_name.split(".jpg")[0]
+            elif ".png" in file_name:
+                file_name = file_name.split(".png")[0]
+            elif ".PNG" in file_name:
+                file_name = file_name.split(".PNG")[0]
+            elif ".JPG" in file_name:
+                file_name = file_name.split(".JPG")[0]
+                
+            filename = f"{file_name}.txt"
+            # Add file to zip
+            zip_file.writestr(filename, photo.description)
+    
+    # Set pointer to the beginning of the stream
+    zip_buffer.seek(0)
 
-def image_list_view(request):
-    if request.method == 'GET':
-        images = Photo.objects.all()
-        print(images)
-        return render(request, 'scroll.html', {'images': images})
+    # Create a HttpResponse with zip content
+    response = HttpResponse(zip_buffer, content_type='application/zip')
+    # Set the HTTP header for downloading
+    response['Content-Disposition'] = 'attachment; filename="boxinfomation.zip"'
     
-def test_view(request):
-    if request.method == 'GET':
-        images = Photo.objects.all()
-        print(images)
-        return render(request, 'drawing.html', {'images': images})
+    return response
     
-from django.shortcuts import get_object_or_404
+    return response
 
 def lablelist_upload(request):
     
@@ -127,21 +112,23 @@ def lablelist_upload(request):
 
     return render(request, 'uploadlabellist.html')
     
-def image_slider_view(request):
+def labeling_view(request):
     if request.method == 'GET':
         images = Photo.objects.all()
         labelList = LabelList.objects.all()
         print(images)
         print(labelList)
-        return render(request, 'slider.html', {'images': images, 'labelList': labelList})
+        return render(request, 'labeling_view.html', {'images': images, 'labelList': labelList})
     
     if request.method == 'POST':
         data = json.loads(request.body)
         image_name = data.get('imageName')
         print(data)
-        
+        imagepageWidth = float(data['imagepageWidth'])
+        imagepageHeight = float(data['imagepageHeight'])
         boxinfo = data["boxinfo"]
         infotext = ""
+        print(imagepageWidth, imagepageHeight)
         for key, value in boxinfo.items():
             print(value)
             labelindex = int(value["labelindex"])
@@ -149,62 +136,25 @@ def image_slider_view(request):
             y = float(value["top"][:-2])
             width = float(value["width"][:-2])
             height = float(value["height"][:-2])
-            
-            nCx = (x + (width * 0.5)) / 800
+
+            nCx = (x + (width * 0.5)) / imagepageWidth
             nCx = round(nCx, 6)
-            nCy = (y + (height * 0.5)) / 500
+            nCy = (y + (height * 0.5)) / imagepageHeight
             nCy = round(nCy, 6)
-            nW = width / 800
+            nW = width / imagepageWidth
             nW = round(nW, 6)
-            nH = height / 500
+            nH = height / imagepageHeight
             nH = round(nH, 6)
             #print(nCx, nCy, nW, nH)
             infotext += str(labelindex) + " " + str(nCx) + " " + str(nCy) + " " + str(nW) + " " +  str(nH) + "\n"
+            
         print(infotext)
         image_url = "static/images/" + image_name
         photo = Photo.objects.filter(image=image_url).first()
-        print(photo)
-        # infoText = ""
-        # x, y, width, height = data["left"], data["top"], data["width"], data["height"]
-        # nCx = (x + (width * 0.5)) / 800
-        # nCx = round(nCx, 6)
-        # nCy = (y + (height * 0.5)) / 500
-        # nCy = round(nCy, 6)
-        # nW = width / 800
-        # nW = round(nW, 6)
-        # nH = height / 500
-        # nH = round(nH, 6)
-        
-        # print(nCx, nCy, nW, nH)
-        # for key, value in data.items():
-        #     infoText += str(value)
-            
+        print(photo)     
             
         photo.description = infotext
         photo.save()
         print(image_url)
 
-        # print(infoText)
-        # print(data)
-        # x = data.get('x')
-        # y = data.get('y')
-
-        # # 마우스 좌표를 Photo 모델의 description에 저장
-        # photo = Photo(description=f"X: {x}, Y: {y}")
-        # photo.save()
-
         return JsonResponse({"status": "success"})
-
-
-def save_bounding_boxes(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        for box_data in data:
-            BoundingBox.objects.create(
-                left=box_data['left'],
-                top=box_data['top'],
-                width=box_data['width'],
-                height=box_data['height']
-            )
-        return JsonResponse({"status": "success"})
-    return JsonResponse({"status": "failed"})
