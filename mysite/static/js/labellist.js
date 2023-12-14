@@ -6,7 +6,10 @@ const submitLabelList = document.querySelectorAll('.labelButtonList')
 
 let labelList = [];
 let labelListbuffer = {};
-let labelindex = 0;
+let labelindex = -1;
+
+//const labelindex = document.querySelector('.labelButtonList').dataset.imageCount;
+
 
 submitLabelList.forEach((buttons, index) => {
     //const labelbutton = buttons.querySelector('button');

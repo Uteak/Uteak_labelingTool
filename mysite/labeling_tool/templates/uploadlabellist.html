@@ -26,7 +26,7 @@
 
     <div id="buttonContainer">
         {% for label in labellist %}
-            <div class = "labelButtonList">
+            <div class = "labelButtonList"  data-image-count="{{ labellist|length }}">
                 <button class="btn btn-primary m-1" data-name= {{ label.name }}> {{label.name}} </button>
             <div>
         {% endfor %}

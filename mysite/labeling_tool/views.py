@@ -29,20 +29,6 @@ def upload_file(request):
         return render(request, 'upload_success.html')
     else:
         return render(request, 'fileupload.html')
-    
-def download_description(request, photo_id):
-    # Get the Photo object based on the provided ID
-    try:
-        photo = Photo.objects.get(id=photo_id)
-    except Photo.DoesNotExist:
-        return HttpResponse("Photo not found", status=404)
-
-    # Create a HttpResponse with text content
-    response = HttpResponse(photo.description, content_type='text/plain')
-    # Set the HTTP header for downloading
-    response['Content-Disposition'] = f'attachment; filename="{photo.image.name}_description.txt"'
-    
-    return response
 
 def download_all_descriptions(request):
     # Create a zip file in memory
@@ -89,15 +75,12 @@ def lablelist_upload(request):
     if request.method == 'POST':
         
         label_data = request.POST.get('labelData')
-        label_data = json.loads(label_data)
-        
+        label_data = json.loads(label_data)       
         labellist = [[] for _ in range(len(label_data))]
-        print(label_data, type(label_data))
-        print(labellist)
+
         
-        for i, (key, index) in enumerate(label_data.items()):
+        for key, index in label_data.items():
             labelName = key
-            print(index, type(index))
             color =  defualtcolor[index % len(defualtcolor)]
             labellist[index] = [labelName, color]
             

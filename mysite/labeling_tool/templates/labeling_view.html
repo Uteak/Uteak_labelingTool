@@ -56,7 +56,7 @@
         </button>
     </div>
 
-    <input type="range" class="pagecontrol" id="pageindex" name="volume" min="0" max="79" step="1" value="1"/>
+    <input type="range" class="pagecontrol" id="pageindex" name="volume" min="0" max="{{ images|length|add:"-1" }}" step="1" value="1"/>
 
     <div id="labellistinfo" class="labellistinfo"></div>
     <div id="Page" class="Page"></div>

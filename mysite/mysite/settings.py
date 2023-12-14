@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -71,6 +70,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mysite.wsgi.application'
+DATA_UPLOAD_MAX_NUMBER_FILES = 10240 # higher than the count of fields
 
 
 # Database
@@ -127,3 +127,5 @@ STATICFILES_DIRS = ('static',)
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+from django.core.exceptions import ValidationError
+

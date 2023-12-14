@@ -15,7 +15,7 @@ const imagepageHeight = imageContainer.getBoundingClientRect().height;
 const imagepageX = imageContainer.getBoundingClientRect().left;
 const imagepageY = imageContainer.getBoundingClientRect().top;
 
-console.log(imagepageWidth, imagepageHeight);
+console.log(imagepageWidth, imagepageHeight, imageCount);
 
 let currentSlide = 0;
 let beforeSlide = 0;
