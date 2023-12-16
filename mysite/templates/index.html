@@ -25,18 +25,40 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
             <div class="container px-4 px-lg-5">
-                <a class="navbar-brand" href="#page-top">Start Bootstrap</a>
+                <a class="navbar-brand" href="#page-top">Start Labeling</a>
                 <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ms-auto my-2 my-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item"><a class="nav-link" href="http://127.0.0.1:8000/logout" >Logout</a></li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link" href="http://127.0.0.1:8000/signup" >Signup</a></li>
+                            <li class="nav-item"><a class="nav-link" href="http://127.0.0.1:8000/login" >Login</a></li>
+                        {% endif %}
                         <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#portfolio">Portfolio</a></li>
                         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
+        {% comment %} <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="#page-top">Start Labeling</a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                        <li class="nav-item"><a class="nav-link" href="http://127.0.0.1:8000/signup"  title="Project Name">
+                            Signup
+                        </a></li>
+                        <li class="nav-item"><a class="nav-link" href="http://127.0.0.1:8000/login"  title="Project Name">
+                            Login
+                        </a></li>
+                        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav> {% endcomment %}
         <!-- Masthead-->
         <header class="masthead">
             <div class="container px-4 px-lg-5 h-100">
@@ -94,6 +116,16 @@
                         <div class="mt-5">
                             <a class="portfolio-box" href= "http://127.0.0.1:8000/labeling_tool/image_slider/" title="Project Name">
                                 <img class="img-fluid" src= "{% static 'assets/labeling.png' %}" alt="..." />
+                            </a>
+                            {% comment %} <div class="mb-2"><i class="bi-globe fs-1 text-primary"></i></div>
+                            <h3 class="h4 mb-2">Ready to Publish</h3> {% endcomment %}
+                            <p class="text-muted mb-0">Start labeling!</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 text-center">
+                        <div class="mt-5">
+                            <a class="portfolio-box" href= "http://127.0.0.1:8000/labeling_tool/image_control/" title="Project Name">
+                                <img class="img-fluid" src= "{% static 'assets/mypage.png' %}" alt="..." />
                             </a>
                             {% comment %} <div class="mb-2"><i class="bi-globe fs-1 text-primary"></i></div>
                             <h3 class="h4 mb-2">Ready to Publish</h3> {% endcomment %}

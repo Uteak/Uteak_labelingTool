@@ -2,28 +2,43 @@
 var colorPicker = document.getElementById('colorPicker')
 var createButton = document.getElementById('createButton')
 var submitButton = document.getElementById('submitButton')
+const deletelabel = document.querySelectorAll('.delete-btn')
 const submitLabelList = document.querySelectorAll('.labelButtonList')
 
 let labelList = [];
-let labelListbuffer = {};
-let labelindex = -1;
+let labeldelete = [];
 
 //const labelindex = document.querySelector('.labelButtonList').dataset.imageCount;
 
 
 submitLabelList.forEach((buttons, index) => {
     //const labelbutton = buttons.querySelector('button');
-    console.log(buttons);
     const labelbutton = buttons.querySelector('button');
     const labelName = labelbutton.getAttribute('data-name');
-    console.log(labelName);
-    labelListbuffer[labelName] = index;
-    labelindex = index;
+    labelList.push(labelName);
     updateHiddenField();
 });
 
+deletelabel.forEach(function(btn) {
+
+    btn.addEventListener('click', function(e) {
+        // 삭제할 버튼의 data-name 속성 값 가져오기
+        const nameToDelete = e.target.getAttribute('data-name');
+        labeldelete.push(nameToDelete);
+        labelList = labelList.filter(item => item !==  nameToDelete); 
+        // 해당 data-name을 가진 버튼 찾아서 삭제
+        document.querySelectorAll(`button[data-name="${nameToDelete}"]`).forEach(function(btn) {
+            btn.parentNode.removeChild(btn);
+        });
+
+        updateHiddenField();
+    });
+
+});
+
+
 function updateHiddenField() {
-    document.getElementById('labelData').value = JSON.stringify(labelListbuffer);
+    document.getElementById('labelData').value = JSON.stringify(labelList);
   }
   
 // colorPicker.addEventListener('input', function(event) {
@@ -36,58 +51,49 @@ createButton.addEventListener('click', function() {
   var labelName = document.getElementById('labelInput').value;
   
 
-  if (labelName.trim() !== '') {
+  if (labelName.trim() !== '' && !labelList.includes(labelName) ) {
     
     var buttonColor = "";
     // Create the button
+    var deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.classList.add('delete-button');
+    deleteButton.style.marginLeft = '10px';
+    deleteButton.style.padding = '10px 15px';
+    deleteButton.style.border = 'none';
+    deleteButton.style.borderRadius = '5px';
+    deleteButton.style.cursor = 'pointer';
+
     var newButton = document.createElement('button');
     newButton.textContent = labelName;
-    
     newButton.classList.add('label-button');
     buttonColor = document.getElementById('colorPicker').value;
     newButton.style.backgroundColor = buttonColor;
 
-    labelindex ++;
-    labelListbuffer[labelName] = labelindex;
+    labelList.push(labelName);
 
     // Add styles to the button
     newButton.style.padding = '10px 15px';
     newButton.style.border = 'none';
     newButton.style.borderRadius = '5px';
     newButton.style.cursor = 'pointer';
-    console.log("Clicked button color:123123123123123" + labelListbuffer);
-    newButton.addEventListener('click', function() {
-      // Access and use the button's color
-      var buttonColor = newButton.style.backgroundColor;
-      const nameoflabel = newButton.textContent;
 
-      labelListbuffer[nameoflabel] = buttonColor;
-      // You can use the buttonColor variable as needed        
-      //console.log("Clicked button color: " + buttonColor);
-      //document.getElementById('ButtonColor').textContent = `CurrentColor: ${buttonColor}, labelName: ${nameoflabel}, labelindex: ${labelListbuffer[nameoflabel]}`;
-      // Additional logic can be added here
+    deleteButton.addEventListener('click', function() {
+        // 버튼과 삭제 버튼을 DOM에서 제거합니다.
+        container.remove();
+        labelList = labelList.filter(item => item !==  labelName); 
+        updateHiddenField();
     });
     // Create a color picker for the button
     var buttonColorPicker = document.createElement('input');
     buttonColorPicker.type = 'color';
     buttonColorPicker.value = document.getElementById('colorPicker').value;
     // Event listener to update the button color
-    buttonColorPicker.addEventListener('input', function() {
-      newButton.style.backgroundColor = buttonColorPicker.value;
-      var buttonColor = newButton.style.backgroundColor;
 
-      // RGB를 16진수로 변환
-      var hexColor = rgbToHex(buttonColor);
-      const nameoflabel = newButton.textContent;
-
-      labelListbuffer[nameoflabel][1] = hexColor;
-      // You can use the buttonColor variable as needed        
-      console.log("Clicked button color: " + hexColor);
-      console.log("labelListbuffer: " + labelListbuffer[nameoflabel][0] + " " + labelListbuffer[nameoflabel][1]);
-    });
     // Append the button and its color picker to the container
     var container = document.createElement('div');
     container.appendChild(newButton);
+    container.appendChild(deleteButton);
     //container.appendChild(buttonColorPicker);
     document.getElementById('buttonContainer').appendChild(container);
     updateHiddenField();

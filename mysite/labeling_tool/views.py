@@ -4,12 +4,14 @@ from .models import Photo, LabelList
 import json
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
 import os
 import zipfile
 from django.conf import settings
 from io import BytesIO
 
+@login_required
 def upload_file(request):
     if request.method == 'POST':
         uploaded_files = request.FILES.getlist('files')
@@ -23,7 +25,7 @@ def upload_file(request):
                 description_file = text_files[image_base_name]
                 description = description_file.read().decode('utf-8')
             
-            photo = Photo(image=image, description=description)
+            photo = Photo(user=request.user, image=image, description=description)
             photo.save()
 
         return render(request, 'upload_success.html')
@@ -37,6 +39,9 @@ def download_all_descriptions(request):
         for photo in Photo.objects.all():
             # Name for the individual text file
             file_name = photo.image.name
+            
+            folder_name = os.path.dirname(file_name)
+            folder_name = folder_name[14:]
             if ".jpg" in file_name:
                 file_name = file_name.split(".jpg")[0]
             elif ".png" in file_name:
@@ -45,10 +50,11 @@ def download_all_descriptions(request):
                 file_name = file_name.split(".PNG")[0]
             elif ".JPG" in file_name:
                 file_name = file_name.split(".JPG")[0]
-                
-            filename = f"{file_name}.txt"
-            # Add file to zip
-            zip_file.writestr(filename, photo.description)
+            
+            if str(folder_name) == str(request.user):
+                filename = f"{file_name}.txt"
+                # Add file to zip
+                zip_file.writestr(filename, photo.description)
     
     # Set pointer to the beginning of the stream
     zip_buffer.seek(0)
@@ -59,8 +65,7 @@ def download_all_descriptions(request):
     response['Content-Disposition'] = 'attachment; filename="boxinfomation.zip"'
     
     return response
-    
-    return response
+
 
 def lablelist_upload(request):
     
@@ -69,39 +74,70 @@ def lablelist_upload(request):
                       "#2F0B3A", "#8A2908", "#2A1B0A", "#190710", "#819FF7", "#0B6121"]
     
     if request.method == 'GET':
-        Labellist = LabelList.objects.all()
-        return render(request, 'uploadlabellist.html', {'labellist' : Labellist})
+        user_labels = LabelList.objects.filter(user=request.user)
+        
+        labelinfoList = []
+        for label in user_labels:
+            labelinfos = label.labelinfo.split('\n')
+            
+            for info in labelinfos:
+                if not info:
+                    continue
+                labelname, labelcolor = info.split()
+                labelinfoList.append([labelname, labelcolor])
+                
+        return render(request, 'uploadlabellist.html', {'labellist' : labelinfoList})
         
     if request.method == 'POST':
         
         label_data = request.POST.get('labelData')
         label_data = json.loads(label_data)       
-        labellist = [[] for _ in range(len(label_data))]
+        labellist = []
 
         
-        for key, index in label_data.items():
-            labelName = key
-            color =  defualtcolor[index % len(defualtcolor)]
-            labellist[index] = [labelName, color]
+        for i in range(len(label_data)):
+            labelName = label_data[i]
+            color =  defualtcolor[i % len(defualtcolor)]
+            labellist.append([labelName, color])
             
-        LabelList.objects.all().delete()
+        labeltext = ""
         for labelName, labelcolor in labellist:
-            
-            labellist_data = LabelList(name=labelName, color=labelcolor)
-            labellist_data.save()
+            labeltext += labelName + " " + labelcolor + '\n'
+        
+        existing_labellist = LabelList.objects.filter(user=request.user)
 
-        print(labellist)
+        # 기존 객체가 존재하면 삭제
+        if existing_labellist.exists():
+            existing_labellist.delete()
 
-
+        # 새 LabelList 객체 생성 및 저장
+        new_labellist = LabelList(user=request.user, labelinfo=labeltext)
+        new_labellist.save()
+        return render(request, 'upload_success.html')
+    
     return render(request, 'uploadlabellist.html')
     
 def labeling_view(request):
     if request.method == 'GET':
-        images = Photo.objects.all()
-        labelList = LabelList.objects.all()
-        print(images)
-        print(labelList)
-        return render(request, 'labeling_view.html', {'images': images, 'labelList': labelList})
+        # images = Photo.objects.all()
+        # labelList = LabelList.objects.all()
+        # print(labelList)
+        user_images = Photo.objects.filter(user=request.user)
+        user_labels = LabelList.objects.filter(user=request.user)
+        
+        labelinfoList = []
+        for label in user_labels:
+            print("Label Info:", label.labelinfo)
+            labelinfos = label.labelinfo.split('\n')
+            
+            for info in labelinfos:
+                if not info:
+                    continue
+                labelname, labelcolor = info.split()
+                print(labelname, labelcolor)
+                labelinfoList.append([labelname, labelcolor])
+
+        return render(request, 'labeling_view.html', {'images': user_images, 'labelList': labelinfoList})
     
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -132,7 +168,7 @@ def labeling_view(request):
             infotext += str(labelindex) + " " + str(nCx) + " " + str(nCy) + " " + str(nW) + " " +  str(nH) + "\n"
             
         print(infotext)
-        image_url = "static/images/" + image_name
+        image_url = "static/images/" + str(request.user) + "/" + image_name
         photo = Photo.objects.filter(image=image_url).first()
         print(photo)     
             
@@ -141,3 +177,31 @@ def labeling_view(request):
         print(image_url)
 
         return JsonResponse({"status": "success"})
+
+
+def image_control_view(request):
+    
+    if request.method == 'GET':
+        # images = Photo.objects.all()
+        # labelList = LabelList.objects.all()
+        # print(labelList)
+        user_images = Photo.objects.filter(user=request.user)
+        user_labels = LabelList.objects.filter(user=request.user)
+        
+        imageName_list = []
+        for image in user_images:
+            imageName = str(image).split('/')[1]
+            print(imageName)
+            imageName_list.append(imageName)
+        
+        labelinfoList = []
+        for label in user_labels:
+            labelinfos = label.labelinfo.split('\n')
+            
+            for info in labelinfos:
+                if not info:
+                    continue
+                labelname, labelcolor = info.split()
+                labelinfoList.append([labelname, labelcolor])
+
+        return render(request, 'image_control.html', {'images': imageName_list, 'labelList': labelinfoList})

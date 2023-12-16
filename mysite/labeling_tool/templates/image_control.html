@@ -1,0 +1,41 @@
+<!-- Django 템플릿 상단에 이러한 태그를 추가합니다 -->
+
+{% load static %}
+{% load bootstrap4 %}
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Webpage</title>
+    <!-- CSS 파일 연결 -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/img_control.css' %}">
+
+</head>
+<body>
+
+    {% comment %} <div id="buttonContainer" style="overflow:auto; width:300px; height:400px;">
+        {% for label in labelList %}
+            <div class="labelButtonList">
+                <input type="color" id="labelcolor" data-index="{{ forloop.counter0 }}" value="{{ label.1 }}">Index: {{ forloop.counter0 }}</input>
+                <button id="labelButton" style="background-color: {{ label.1 }};" class="label-button">{{ label.0 }}</button>
+            </div> 
+        {% endfor %}
+        
+    </div> {% endcomment %}
+
+    <div class="carousel_main" style="overflow:auto; width:300px; height:400px;">
+        <div class="carousel_wrapper" > 
+            {% for imageName in images %}
+              <div  class="carousel_slide"  data-image-count="{{ images|length }}" >
+                <input type="checkbox" name="xxx" value="yyy" unchecked> {{ imageName }}</input>
+                {% comment %} <img src="{{ list.image.url }}" alt="{{ list.title }}" style="width: 970px; height: 600px;"> {% endcomment %}
+              </div> 
+            {% endfor %}
+          </div>
+    </div>
+
+</body>
+</html>
+
+{% endblock%}

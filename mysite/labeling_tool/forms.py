@@ -11,10 +11,11 @@ from .models import Photo, LabelList
 class FileUploadForm(ModelForm):
     class Meta:
         model = Photo
-        fields = ['image', 'description']
+        fields = ['user', 'image', 'description']
         
         
 class LabelListForm(ModelForm):
     class Meta:
         model = LabelList
-        fields = ['name', 'color']
+        fields = ['user', 'labelinfo']
+        

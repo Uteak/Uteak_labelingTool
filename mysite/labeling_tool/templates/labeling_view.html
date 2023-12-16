@@ -24,8 +24,8 @@
     <div id="buttonContainer" style="overflow:auto; width:300px; height:400px;">
         {% for label in labelList %}
             <div class="labelButtonList">
-                <input type="color" id="labelcolor" data-index="{{ forloop.counter0 }}" value="{{ label.color }}">Index: {{ forloop.counter0 }}</input>
-                <button id="labelButton" style="background-color: {{ label.color }};" class="label-button">{{ label.name }}</button>
+                <input type="color" id="labelcolor" data-index="{{ forloop.counter0 }}" value="{{ label.1 }}">Index: {{ forloop.counter0 }}</input>
+                <button id="labelButton" style="background-color: {{ label.1 }};" class="label-button">{{ label.0 }}</button>
             </div> 
         {% endfor %}
         
