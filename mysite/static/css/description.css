@@ -1,0 +1,32 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+.intro, .instructions, .faq {
+    padding: 15px;
+    margin-bottom: 15px;
+    background: white;
+}
+h1, h2 {
+    color: #333;
+}
+ul {
+    list-style: none;
+    padding: 0;
+}
+li {
+    margin-bottom: 10px;
+}
+.screenshot {
+    width: 100%;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+}

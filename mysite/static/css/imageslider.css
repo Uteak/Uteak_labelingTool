@@ -4,9 +4,8 @@ body {
 }
 
 .carousel_main{
-    width: 970px;
+    width: 1000px;
     cursor: crosshair; 
-    color: red;
     position: relative;
     overflow: hidden;
     margin: 0 auto;
@@ -134,4 +133,24 @@ body {
     top: 80px;
     left: 30px;
     cursor: pointer;
+}
+
+.modal {
+    display: none; 
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4); /* 반투명 배경 */
+    z-index: 1; /* 다른 요소 위에 표시 */
+}
+
+/* 모달 내부 콘텐츠 스타일 */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
 }

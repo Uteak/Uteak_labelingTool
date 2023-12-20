@@ -1,17 +1,26 @@
-<!DOCTYPE html>
+{% load static %}
+{% load bootstrap4 %}
+
 <html>
 <head>
     <title>Login</title>
+    <link rel="stylesheet"  href="{% static 'css/login.css' %}">
 </head>
 <body>
-    <h2>Login</h2>
     <form method="post">
         {% csrf_token %}
-        Username: <input type="text" name="username"><br>
-        Password: <input type="password" name="password"><br>
+        <h2>Login</h2>
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password">
+        </div>
         <button type="submit">Login</button>
         {% if error %}
-            <p>{{ error }}</p>
+            <p class="error">{{ error }}</p>
         {% endif %}
     </form>
 </body>
