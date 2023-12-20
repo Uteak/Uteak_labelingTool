@@ -4,11 +4,7 @@ let isDragging = false;
 let dragStartX = 0;
 let dragStartY = 0;
 let boundingBox = null;
-
-
-
-let currentIndex = 0;
-let currentColor = labelListbuffer[currentIndex];
+let currentColor = labelListbuffer[currentButtonIndex];
 //let labelListbuffer = {};
 
 let currentWidth = 0;
@@ -22,9 +18,10 @@ let boxId = 0;
 let labelindex = 0;
 let isDrawingInitCalled = false;
 
-
-
+// 초기 상태 업데이트
+updateButtonState();
 drawingInit();
+showSlide(0);
 
 imageContainer.addEventListener('mousedown', (event) => {
 
@@ -84,7 +81,7 @@ imageContainer.addEventListener('mouseup', (event) => {
   
 
       boundingBoxebuffer[currentSlide][boxId] = {
-        labelindex : currentIndex,
+        labelindex : currentButtonIndex,
         left: boundingBox.style.left,
         top: boundingBox.style.top,
         width: boundingBox.style.width,
@@ -212,4 +209,18 @@ function drawingInit(){
 
   drawingBoundingBox(0);
   isDrawingInitCalled = true;
+}
+
+var modal = document.getElementById("myModal");
+
+// 버튼 클릭 시 모달을 보여줍니다
+document.getElementById("helpButton").onclick = function() {
+    modal.style.display = "block";
+}
+
+// 모달 외부를 클릭하면 닫힙니다
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
 }

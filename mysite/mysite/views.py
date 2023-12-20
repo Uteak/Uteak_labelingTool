@@ -22,7 +22,7 @@ from . import models, tasks, forms
 
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 
 def signup(request):
     if request.method == 'POST':
@@ -52,12 +52,12 @@ def user_login(request):
     else:
         return render(request, 'login.html')
 
-from django.contrib.auth import logout
-from django.shortcuts import redirect
-
 def user_logout(request):
     logout(request)
     return redirect('home')  # 로그아웃 후 리다이렉트할 페이지
+
+def description_page(request):
+    return render(request, 'description.html')
 
 def index(request):
     # pass

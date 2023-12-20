@@ -40,64 +40,46 @@ deletelabel.forEach(function(btn) {
 function updateHiddenField() {
     document.getElementById('labelData').value = JSON.stringify(labelList);
   }
-  
-// colorPicker.addEventListener('input', function(event) {
-//   document.getElementById('labelButton').style.backgroundColor = event.target.value;
-//   currentColor = event.target.value;
-// });
 
 
 createButton.addEventListener('click', function() {
-  var labelName = document.getElementById('labelInput').value;
-  
+    var labelName = document.getElementById('labelInput').value;
 
-  if (labelName.trim() !== '' && !labelList.includes(labelName) ) {
-    
-    var buttonColor = "";
-    // Create the button
-    var deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete';
-    deleteButton.classList.add('delete-button');
-    deleteButton.style.marginLeft = '10px';
-    deleteButton.style.padding = '10px 15px';
-    deleteButton.style.border = 'none';
-    deleteButton.style.borderRadius = '5px';
-    deleteButton.style.cursor = 'pointer';
+    if (labelName.trim() !== '' && !labelList.includes(labelName)) {
+        // 라벨 버튼 생성
+        var newButton = document.createElement('button');
+        newButton.textContent = labelName;
+        newButton.classList.add('btn', 'btn-outline-primary', 'mr-1');
+        newButton.setAttribute('data-name', labelName);
+        newButton.style.marginRight = '5px'
+        
+        // 삭제 버튼 생성
+        var deleteButton = document.createElement('button');
+        deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Delete'; // Font Awesome 아이콘 사용
+        deleteButton.classList.add('btn', 'btn-outline-danger', 'delete-btn');
+        deleteButton.setAttribute('data-name', labelName);
 
-    var newButton = document.createElement('button');
-    newButton.textContent = labelName;
-    newButton.classList.add('label-button');
-    buttonColor = document.getElementById('colorPicker').value;
-    newButton.style.backgroundColor = buttonColor;
+        // 삭제 이벤트 핸들러 추가
+        deleteButton.addEventListener('click', function() {
+            // 버튼과 삭제 버튼을 DOM에서 제거합니다.
+            container.remove();
+            labelList = labelList.filter(item => item !== labelName); 
+            updateHiddenField();
+        });
 
-    labelList.push(labelName);
+        // 버튼을 담을 컨테이너 생성
+        var container = document.createElement('div');
+        container.classList.add('labelButtonList', 'mb-1');
+        container.appendChild(newButton);
+        container.appendChild(deleteButton);
 
-    // Add styles to the button
-    newButton.style.padding = '10px 15px';
-    newButton.style.border = 'none';
-    newButton.style.borderRadius = '5px';
-    newButton.style.cursor = 'pointer';
+        // 컨테이너를 buttonContainer에 추가
+        document.getElementById('buttonContainer').appendChild(container);
 
-    deleteButton.addEventListener('click', function() {
-        // 버튼과 삭제 버튼을 DOM에서 제거합니다.
-        container.remove();
-        labelList = labelList.filter(item => item !==  labelName); 
+        // 라벨 목록 업데이트 및 숨겨진 필드 업데이트
+        labelList.push(labelName);
         updateHiddenField();
-    });
-    // Create a color picker for the button
-    var buttonColorPicker = document.createElement('input');
-    buttonColorPicker.type = 'color';
-    buttonColorPicker.value = document.getElementById('colorPicker').value;
-    // Event listener to update the button color
-
-    // Append the button and its color picker to the container
-    var container = document.createElement('div');
-    container.appendChild(newButton);
-    container.appendChild(deleteButton);
-    //container.appendChild(buttonColorPicker);
-    document.getElementById('buttonContainer').appendChild(container);
-    updateHiddenField();
-  }
+    }
 });
 
 function rgbToHex(rgb) {

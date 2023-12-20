@@ -2,8 +2,7 @@
 
 
 document.addEventListener('keydown', (event) => {
-    console.log(event);
-
+    
     if (event.key === 'a') {
         if (currentSlide > 0) {
             showSlide(currentSlide - 1);
@@ -17,12 +16,14 @@ document.addEventListener('keydown', (event) => {
       }
     
     if (event.key === 'ArrowLeft') {
+        event.preventDefault();
         if (currentSlide > 0) {
             showSlide(currentSlide - 1);
         }
       }
 
     if (event.key === 'ArrowRight') {
+        event.preventDefault();
         if (currentSlide < imageCount - 1) { 
             showSlide(currentSlide + 1);
         }
@@ -62,4 +63,31 @@ document.addEventListener('keydown', (event) => {
         drawingBoundingBox(currentSlide);
     }
 
+    if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        currentButtonIndex = Math.max(0, currentButtonIndex - 1);
+        triggerClickEvent();
+      } 
+
+    if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        currentButtonIndex = Math.min(labelButtons.length - 1, currentButtonIndex + 1);
+        triggerClickEvent();
+    }
+
+    if (event.key === 'w') {
+        currentButtonIndex = Math.max(0, currentButtonIndex - 1);
+        triggerClickEvent();
+      } 
+
+    if (event.key === 's') {
+        currentButtonIndex = Math.min(labelButtons.length - 1, currentButtonIndex + 1);
+        triggerClickEvent();
+    }
+
+
+    if (event.ctrlKey && event.key === 's'){
+        event.preventDefault();
+        saveBoundingBox(currentSlide);
+    }
 });

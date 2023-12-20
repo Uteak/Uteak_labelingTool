@@ -15,10 +15,9 @@ const imagepageHeight = imageContainer.getBoundingClientRect().height;
 const imagepageX = imageContainer.getBoundingClientRect().left;
 const imagepageY = imageContainer.getBoundingClientRect().top;
 
-console.log(imagepageWidth, imagepageHeight, imageCount);
-
-let currentSlide = 0;
-let beforeSlide = 0;
+let currentSlide = 0; // 현재 선택된 이미지 인덱스
+let beforeSlide = 0; // 이전 선택된 이미지 인덱스
+let currentButtonIndex = 0; // 현재 선택된 라벨 버튼의 인덱스
 
 let imagenameList = [];
 let boxInfoList = [];
@@ -31,42 +30,6 @@ for (let i = 0; i < imageCount; i++) {
   boundingBoxebuffer[i] = {};
 }
 
-labelButtons.forEach((buttons, index) => {
-    console.log("Clicked button color");
-    const labelcolor = buttons.querySelector('input');
-    const labelbutton = buttons.querySelector('button');
-    labelListbuffer[index] = labelcolor.value;
-
-    labelbutton.addEventListener('click', function() {
-      var buttonColor = labelcolor.value;
-      const nameoflabel = labelbutton.textContent;
-
-      // 버튼 클릭시 박스 드로잉 색상 변경
-      console.log("Clicked button color: " + buttonColor);
-      currentColor = labelcolor.value;
-      currentIndex = index;
-        
-      // 버튼 클릭시 버튼 택스트 색상 변경.
-      labelButtons.forEach(buttons => {
-        const button = buttons.querySelector('button');
-        button.style.color = 'white'; // 여기서 초기 색상으로 설정 (예: 검정색 또는 기본 색상)
-      });
-      this.style.color = 'black';
-
-      document.getElementById('labellistinfo').textContent = `label index : ${currentIndex}, label name : ${nameoflabel}`;
-    });
-  
-    labelcolor.addEventListener('input', function() {
-      labelbutton.style.backgroundColor = labelcolor.value;
-      currentColor = labelcolor.value;
-      currentIndex = index;
-      labelListbuffer[currentIndex] = currentColor;
-
-      removeSpecificBoundingBoxes();
-      drawingBoundingBox(currentSlide);
-    });
-})
-
 slides.forEach(slide => {
     const img = slide.querySelector('img'); // 각 슬라이드 내의 이미지 태그 찾기
     const src = img.getAttribute('src'); // 이미지의 src 속성 값 가져오기
@@ -78,20 +41,62 @@ slides.forEach(slide => {
     boxInfoList.push(description);
 });
 
+// 버튼의 상태를 초기화하고 현재 선택된 버튼 강조
+function updateButtonState() {
+  labelButtons.forEach((button, index) => {
+    const btn = button.querySelector('button');
+    btn.style.color = index === currentButtonIndex ? 'black' : 'white';
+    const labelname = labelButtons[currentButtonIndex].textContent;
+    document.getElementById('labellistinfo').textContent = `label index : ${currentButtonIndex}, label name : ${labelname}`;
+  });
+}
+
+// 클릭 이벤트를 트리거하는 함수
+function triggerClickEvent() {
+  const currentButton = labelButtons[currentButtonIndex].querySelector('button');
+  currentButton.click();
+}
+
+labelButtons.forEach((buttons, index) => {
+    const labelcolor = buttons.querySelector('input');
+    const labelbutton = buttons.querySelector('button');
+    labelListbuffer[index] = labelcolor.value;
+
+    labelbutton.addEventListener('click', function() {
+      const labelname = labelbutton.textContent;
+      // 버튼 클릭시 박스 드로잉 색상 변경
+      currentColor = labelcolor.value;
+      currentButtonIndex = index;
+        
+      // 버튼 클릭시 버튼 택스트 색상 변경.
+      updateButtonState();
+      document.getElementById('labellistinfo').textContent = `label index : ${currentButtonIndex}, label name : ${labelname}`;
+
+    });
+    
+    labelcolor.addEventListener('input', function() {
+      labelbutton.style.backgroundColor = labelcolor.value;
+      currentColor = labelcolor.value;
+      currentButtonIndex = index;
+      labelListbuffer[currentButtonIndex] = currentColor;
+
+      removeSpecificBoundingBoxes();
+      drawingBoundingBox(currentSlide);
+    });
+})
+
 
 function showSlide(slideIndex) {
     swiper.style.transform = `translateX(-${slideIndex * imagepageWidth}px)`;
     beforeSlide = currentSlide
     currentSlide = slideIndex;
-    console.log(PageControl.value, currentSlide)
+
     if (PageControl.value !== currentSlide){
-        console.log(PageControl.value, currentSlide)
         PageControl.value = currentSlide;
     }
 
-    document.getElementById('Page').textContent = `imageName: ${imagenameList[currentSlide]}`;
+    document.getElementById('Page').textContent = `imageName: ${imagenameList[currentSlide]}, CurrentSlideIndex: ${currentSlide},`;
     actionStack = []; 
-    displayImageInfo(currentSlide, beforeSlide);
     saveBoundingBox(beforeSlide);
     removeSpecificBoundingBoxes();
     drawingBoundingBox(currentSlide);
@@ -99,7 +104,6 @@ function showSlide(slideIndex) {
 }
 
 prevButtons.forEach((prevButton) => {
-    console.log("prevButtons : ",PageControl.value, currentSlide)
     prevButton.addEventListener('click', () => {
         if (currentSlide > 0) {
             showSlide(currentSlide - 1);
@@ -108,7 +112,6 @@ prevButtons.forEach((prevButton) => {
 });
 
 nextButtons.forEach((nextButton) => {
-    console.log("nextButtons : ",PageControl.value, currentSlide)
     nextButton.addEventListener('click', () => {
         if (currentSlide < imageCount - 1) { 
             showSlide(currentSlide + 1);
@@ -127,7 +130,6 @@ PageControl.addEventListener('input', function() {
     showSlide(currentSlide);
 });
 
-showSlide(0);
 
 function drawingBoundingBox(currentSlide){
 
@@ -150,9 +152,6 @@ function drawingBoundingBox(currentSlide){
     };
 
 }
-function displayImageInfo(current, before) {
-    document.getElementById('index').textContent = `CurrentslideIndex: ${current}`;
-}
 
 function removeSpecificBoundingBoxes() {
     const boxes = imageContainer.querySelectorAll('.bounding-box');
@@ -160,11 +159,6 @@ function removeSpecificBoundingBoxes() {
 }
 
 function saveBoundingBox(saveSlide){
-
-    // console.log(saveSlide);
-    // if (!boundingBoxebuffer){
-    //     return;
-    // }
 
     fetch('/labeling_tool/image_slider/', {
         method: 'POST',
