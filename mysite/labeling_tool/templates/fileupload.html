@@ -2,18 +2,39 @@
 {% load static %}
 {% load bootstrap4 %}
 {% block content %}
-<div class="container">
-    <form method='POST' action="" enctype="multipart/form-data">
+<div class="container py-4"> <!-- 패딩 추가 -->
+    <form method='POST' action="" enctype="multipart/form-data" class="border p-4 rounded shadow"> <!-- 폼 스타일링 -->
         {% csrf_token %}
         
-        <div class="form-group m-3">
+        <div class="form-group mb-3">
             <label>Upload files</label>
-            <input required name="files" type="file" multiple class="form-control-file">
+            <input required name="files" type="file" multiple class="form-control-file border rounded p-2"> <!-- 입력 필드 스타일링 -->
         </div>
-    
-        <button type='submit' class="btn btn-primary m-3">Submit</button>
-        <a href="{% url 'home' %}" class="btn btn-primary mt-3">Home</a>
+
+        <button type='submit' name="form_type" value="upload_files" class="btn btn-success mb-0">Submit</button> <!-- 하단 마진 조정 -->
+        <a href="{% url 'home' %}" class="btn btn-secondary mt-0">Home</a> <!-- 상단 마진 조정 -->
     </form>
 
+    <a >My upload file</a> <!-- 상단 마진 조정 -->
+
+    <form method="post" action="{% url 'fileupload' %}">
+        {% csrf_token %}
+        <div class="carousel_main" style="overflow:auto; width:300px; height:400px;">
+            <div class="carousel_wrapper">
+                {% for imageName in images %}
+                    <div class="carousel_slide" data-image-count="{{ images|length }}">
+                        <input type="checkbox" class="image-checkbox" name="image_ids" value="{{ imageName }}"> {{ imageName }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" name="form_type" value="image_control" >Delete Selected</button>
+
+        <button type="button" id = "checkAll">Check All</button>
+        <button type="button" id = "uncheckAll">Uncheck All</button>
+    </form>
+
+    <script src="{% static 'js/imagecontrol.js' %}"></script> 
+
 </div>
-{% endblock%}
+{% endblock %}

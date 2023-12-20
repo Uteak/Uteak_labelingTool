@@ -5,36 +5,34 @@
 <html>
 <head>
     <title>Label List Webpage</title>
-    <!-- CSS 파일 연결 -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/labellist.css' %}">
 </head>
 <body>
-    
+    <div class="container py-4">
+        <div class="controls mb-3">
+            <input type="text" id="labelInput" class="form-control mr-2" placeholder="Enter label name">
+            <button id="createButton" class="btn btn-info">Create Button</button>
+        </div>
 
-    <div class="controls">
-        <input type="text" id="labelInput" placeholder="Enter label name">
-        <input type="color" id="colorPicker" value="#007bff">
-        <button id="createButton">Create Button</button>
-    </div>  
+        <form method='POST' action="" enctype="multipart/form-data" class="mb-3">
+            {% csrf_token %}
+            <input type="hidden" name="labelData" id="labelData">
+            <button id='submitButton' type='submit' class="btn btn-success mb-0">Submit</button>           
+            <a href="{% url 'home' %}" class="btn btn-secondary mt-0">Home</a> <!-- 상단 마진 조정 -->
+        </form>
 
-
-    <form method='POST' action="" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="hidden" name="labelData" id="labelData">
-        <button id='submitButton' type='submit' class="btn btn-primary m-3">Submit</button>
-    </form>
-
-    <div id="buttonContainer">
-        {% for label in labellist %}
-            <div class = "labelButtonList"  data-image-count="{{ labelinfoList|length }}">
-                <button class="btn btn-primary m-1" data-name= {{ label.0 }}> {{ label.0 }} </button>
-                <button class="btn btn-danger m-1 delete-btn" data-name="{{ label.0 }}">Delete</button>
-            <div>
-        {% endfor %}
+        <!-- buttonContainer를 Submit 버튼의 form 바로 다음에 배치 -->
+        <div id="buttonContainer" class="d-flex justify-content-center flex-column my-auto">
+            {% for label in labellist %}
+                <div class="labelButtonList mb-1" data-image-count="{{ labelinfoList|length }}">
+                    <button class="btn btn-outline-primary mr-1" data-name="{{ label.0 }}">{{ label.0 }}</button>
+                    <button class="btn btn-outline-danger delete-btn" data-name="{{ label.0 }}"><i class="fas fa-trash-alt"></i> Delete</button>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 
     <script src="{% static 'js/labellist.js' %}"></script>
 </body>
 </html>
-
-{% endblock%}
+{% endblock %}
