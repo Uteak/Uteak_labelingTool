@@ -6,11 +6,11 @@ ENV PYTHONUNBUFFERED 1
 
 ARG DEV=false
 
-COPY requirements.txt /app/
-COPY requirements.dev.txt /app/
-COPY app /app/
+COPY requirements.txt /mysite/
+COPY requirements.dev.txt /mysite/
+COPY mysite /mysite/
 
-WORKDIR /app
+WORKDIR /mysite
 RUN pip install -r requirements.txt
 
 # install this only if it is dev mode
