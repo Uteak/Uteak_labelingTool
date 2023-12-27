@@ -1,10 +1,6 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
-import os, datetime, json, tempfile, zipfile
-import requests
-
 from django.http.response import HttpResponse
-import celery.result
 from PIL import Image
 
 from dateutil.tz import tzlocal
@@ -16,10 +12,6 @@ from django.db.models import Q
 from django.core.files import File
 
 from django.conf import settings
-import django.utils.timezone
-
-from . import models, tasks, forms
-
 from django.shortcuts import render, redirect
 from .forms import SignUpForm
 from django.contrib.auth import login, authenticate, logout

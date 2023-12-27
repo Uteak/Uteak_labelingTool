@@ -7,10 +7,15 @@
     <title>Label List Webpage</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/labellist.css' %}">
 </head>
+
 <body>
+    <div class="container py-1"> {{ userid }} </div>
+
+
     <div class="container py-4">
         <div class="controls mb-3">
             <input type="text" id="labelInput" class="form-control mr-2" placeholder="Enter label name">
+            <p></p>
             <button id="createButton" class="btn btn-info">Create Button</button>
         </div>
 
@@ -22,7 +27,8 @@
         </form>
 
         <!-- buttonContainer를 Submit 버튼의 form 바로 다음에 배치 -->
-        <div id="buttonContainer" class="d-flex justify-content-center flex-column my-auto">
+
+        <div class="container py-4">
             {% for label in labellist %}
                 <div class="labelButtonList mb-1" data-image-count="{{ labelinfoList|length }}">
                     <button class="btn btn-outline-primary mr-1" data-name="{{ label.0 }}">{{ label.0 }}</button>

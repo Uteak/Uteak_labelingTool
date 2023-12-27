@@ -5,7 +5,7 @@ body {
 
 .carousel_main{
     width: 1000px;
-    cursor: crosshair; 
+    cursor: crosshair;
     position: relative;
     overflow: hidden;
     margin: 0 auto;
@@ -17,7 +17,7 @@ body {
     transition: transform 0.1s;
 }
 
-.carousel_slide {
+.carousel_slide{
     width: 100%;
     height: 100%;
     position: static;
@@ -81,7 +81,7 @@ body {
     color: white;
 }
 
-.index {
+.User {
     color: white;
 }
 
@@ -117,6 +117,7 @@ body {
 .labelButtonList {
     color: white;
 }
+
 .label-button:hover {
     background-color: #0056b3;
 }

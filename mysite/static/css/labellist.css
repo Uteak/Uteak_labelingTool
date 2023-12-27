@@ -18,10 +18,3 @@
     border-radius: 5px;
     cursor: pointer;
 }
-
-#buttonContainer {
-    position: absolute;
-    top: 130px;
-    left: 30px;
-    cursor: pointer;
-}

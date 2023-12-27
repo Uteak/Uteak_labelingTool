@@ -36,7 +36,8 @@ def upload_file(request):
                 labelname, labelcolor = info.split()
                 labelinfoList.append([labelname, labelcolor])
 
-        return render(request, 'fileupload.html', {'images': imageName_list, 'labelList': labelinfoList})
+        userid = request.user
+        return render(request, 'fileupload.html', {'images': imageName_list, 'labelList': labelinfoList, 'userid' : userid})
     
     if request.method == 'POST':
         
@@ -127,8 +128,9 @@ def lablelist_upload(request):
                     continue
                 labelname, labelcolor = info.split()
                 labelinfoList.append([labelname, labelcolor])
-                
-        return render(request, 'uploadlabellist.html', {'labellist' : labelinfoList})
+        
+        userid = request.user
+        return render(request, 'uploadlabellist.html', {'labellist' : labelinfoList, 'userid' : userid})
         
     if request.method == 'POST':
         
@@ -177,7 +179,8 @@ def labeling_view(request):
                 labelname, labelcolor = info.split()
                 labelinfoList.append([labelname, labelcolor])
 
-        return render(request, 'labeling_view.html', {'images': user_images, 'labelList': labelinfoList})
+        userid = request.user
+        return render(request, 'labeling_view.html', {'images': user_images, 'labelList': labelinfoList, 'userid': userid})
     
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -186,7 +189,7 @@ def labeling_view(request):
         imagepageHeight = float(data['imagepageHeight'])
         boxinfo = data["boxinfo"]
         infotext = ""
-        
+
         for key, value in boxinfo.items():
             labelindex = int(value["labelindex"])
             x = float(value["left"][:-2])
@@ -214,44 +217,44 @@ def labeling_view(request):
         return JsonResponse({"status": "success"})
 
 
-def image_control_view(request):
+# def image_control_view(request):
     
-    if request.method == 'POST':
-        image_ids = request.POST.getlist('image_ids')
+#     if request.method == 'POST':
+#         image_ids = request.POST.getlist('image_ids')
         
-        for imageName in image_ids:
-            image_id = "static/images/" + str(request.user) + "/" + imageName
-            image_delete = Photo.objects.filter(image=image_id)
-            image_delete.delete()
+#         for imageName in image_ids:
+#             image_id = "static/images/" + str(request.user) + "/" + imageName
+#             image_delete = Photo.objects.filter(image=image_id)
+#             image_delete.delete()
             
-            file_path = os.path.join(settings.MEDIA_ROOT, image_id)
-            if os.path.isfile(file_path):
-                os.remove(file_path)
+#             file_path = os.path.join(settings.MEDIA_ROOT, image_id)
+#             if os.path.isfile(file_path):
+#                 os.remove(file_path)
             
-        #Photo.objects.filter(image=image_idList).delete()
-        return redirect('image_control')
+#         #Photo.objects.filter(image=image_idList).delete()
+#         return redirect('image_control')
     
-    if request.method == 'GET':
-        # images = Photo.objects.all()
-        # labelList = LabelList.objects.all()
-        # print(labelList)
-        user_images = Photo.objects.filter(user=request.user)
-        user_labels = LabelList.objects.filter(user=request.user)
+#     if request.method == 'GET':
+#         # images = Photo.objects.all()
+#         # labelList = LabelList.objects.all()
+#         # print(labelList)
+#         user_images = Photo.objects.filter(user=request.user)
+#         user_labels = LabelList.objects.filter(user=request.user)
         
-        imageName_list = []
-        for image in user_images:
-            imageName = str(image).split('/')[1]
-            imageName_list.append(imageName)
+#         imageName_list = []
+#         for image in user_images:
+#             imageName = str(image).split('/')[1]
+#             imageName_list.append(imageName)
         
-        labelinfoList = []
-        for label in user_labels:
-            labelinfos = label.labelinfo.split('\n')
+#         labelinfoList = []
+#         for label in user_labels:
+#             labelinfos = label.labelinfo.split('\n')
             
-            for info in labelinfos:
-                if not info:
-                    continue
-                labelname, labelcolor = info.split()
-                labelinfoList.append([labelname, labelcolor])
+#             for info in labelinfos:
+#                 if not info:
+#                     continue
+#                 labelname, labelcolor = info.split()
+#                 labelinfoList.append([labelname, labelcolor])
 
-        return render(request, 'image_control.html', {'images': imageName_list, 'labelList': labelinfoList})
+#         return render(request, 'image_control.html', {'images': imageName_list, 'labelList': labelinfoList})
     

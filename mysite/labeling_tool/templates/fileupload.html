@@ -2,7 +2,10 @@
 {% load static %}
 {% load bootstrap4 %}
 {% block content %}
-<div class="container py-4"> <!-- 패딩 추가 -->
+
+<div class="container py-1"> {{ userid }} </div>
+
+<div class="container py-3"> <!-- 패딩 추가 -->
     <form method='POST' action="" enctype="multipart/form-data" class="border p-4 rounded shadow"> <!-- 폼 스타일링 -->
         {% csrf_token %}
         
@@ -14,8 +17,8 @@
         <button type='submit' name="form_type" value="upload_files" class="btn btn-success mb-0">Submit</button> <!-- 하단 마진 조정 -->
         <a href="{% url 'home' %}" class="btn btn-secondary mt-0">Home</a> <!-- 상단 마진 조정 -->
     </form>
-
-    <a >My upload file</a> <!-- 상단 마진 조정 -->
+    <p></p>
+    <p>Upload file</p> <!-- 상단 마진 조정 -->
 
     <form method="post" action="{% url 'fileupload' %}">
         {% csrf_token %}
