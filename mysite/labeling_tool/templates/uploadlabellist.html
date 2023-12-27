@@ -28,7 +28,7 @@
 
         <!-- buttonContainer를 Submit 버튼의 form 바로 다음에 배치 -->
 
-        <div class="container py-4">
+        <div id="buttonContainer" class="container py-4">
             {% for label in labellist %}
                 <div class="labelButtonList mb-1" data-image-count="{{ labelinfoList|length }}">
                     <button class="btn btn-outline-primary mr-1" data-name="{{ label.0 }}">{{ label.0 }}</button>
