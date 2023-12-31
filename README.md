@@ -5,9 +5,9 @@
 
 #### Django Labeller의 실제 작동 모습
 
-- ![Django labeller movie](doc/imageUpload.gif "image upload in action")
-- ![Django labeller movie](doc/LabelListUpload.gif "labellist upload in action")
-- ![Django labeller movie](doc/Labeling.gif "Labeling in action")
+<img src="doc/imageUpload.gif" alt="image upload in action" width="600"/>
+<img src="doc/LabelListUpload.gif" alt="labellist upload in action" width="600"/>
+<img src="doc/Labeling.gif" alt="Labeling in action" width="600"/>
 
 프로젝트 배포 : http://43.201.55.17/ 
 
