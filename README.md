@@ -44,15 +44,14 @@
 ## install 
 
 ``` 
-> pip install Django
-> pip install django-storages
-> pip install django-bootstrap4
 > pip install -r requirements.txt
 ```
 
 ## shell script
 ``` 
 > cd mysite
+> python manage.py makemigrations  
+> python manage.py migrate 
 > python manage.py runserver
 ```
 
