@@ -9,7 +9,7 @@
 <img src="doc/LabelListUpload.gif" alt="labellist upload in action" width="600"/>
 <img src="doc/Labeling.gif" alt="Labeling in action" width="600"/>
 
-프로젝트 배포 : http://43.201.55.17/ 
+프로젝트 배포 : http://43.201.55.17/ (현재 배포 중지)
 
 ## 프로젝트 개요
 
@@ -35,7 +35,7 @@
 ##  기술 스택
 - 프론트엔드: HTML, CSS, JavaScript 
 
-- 백엔드: Django, Django REST framework
+- 백엔드: Django, python
 
 - 데이터베이스: Sqlite
 
