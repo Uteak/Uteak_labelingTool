@@ -9,8 +9,6 @@
 <img src="doc/LabelListUpload.gif" alt="labellist upload in action" width="600"/>
 <img src="doc/Labeling.gif" alt="Labeling in action" width="600"/>
 
-프로젝트 배포 : http://43.201.55.17/ (현재 배포 중지)
-
 ## 프로젝트 개요
 
 - 목적: 이미지/텍스트 데이터를 효율적으로 라벨링하여 데이터 분석 및 머신 러닝 모델 훈련을 용이하게 하는 도구 개발.
